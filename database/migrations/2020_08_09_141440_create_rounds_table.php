@@ -21,7 +21,7 @@ class CreateRoundsTable extends Migration
             $table->integer('processed')->nullable();
             $table->enum('paired', [0, 1])->default(0);
             $table->integer('published')->default(0);
-            $table->integer('ranking')->default(0)
+            $table->integer('ranking')->default(0);
             $table->timestamps();
         });
     }

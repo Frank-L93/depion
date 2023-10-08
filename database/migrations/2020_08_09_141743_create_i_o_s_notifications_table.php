@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateIOSNoticationsTable extends Migration
+class CreateIOSNotificationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -31,6 +31,6 @@ class CreateIOSNoticationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('i_o_s_notications');
+        Schema::dropIfExists('i_o_s_notifications');
     }
 }
