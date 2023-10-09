@@ -563,7 +563,8 @@ class AdminController extends Controller
                         "name" => $importData[1],
                         "email" => $importData[2],
                         "rating" => $importData[3],
-                        "beschikbaar" => $importData[4]
+                        "beschikbaar" => $importData[4],
+                        "initPassWord" => $importData[5]
                     );
 
                     // Check if KNSB_ID exist, then it is necessary to update, but no need to change password.
@@ -579,7 +580,7 @@ class AdminController extends Controller
                             [
                                 'name' => htmlspecialchars($insertData['name']),
                                 'email' => $insertData['email'],
-                                'password' => Hash::make($insertData['knsb_id']),
+                                'password' => Hash::make($insertData['initPassWord']),
                                 'rating' => $insertData['rating'],
                                 'beschikbaar' => $insertData['beschikbaar'],
 

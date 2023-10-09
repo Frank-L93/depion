@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
-use App\User;
+use App\models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -77,7 +77,6 @@ class RegisterController extends Controller
             'beschikbaar' => $data['beschikbaar'],
             'api_token' => Str::random(10),
             'settings' => ["notifications"=>"0"],
-            'activate' => 0,
         ]);
     }
 }
