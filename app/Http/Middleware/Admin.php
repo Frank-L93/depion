@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Closure;
 use App\Models\Config;
+use App\Models\User;
 
 class Admin
 {
