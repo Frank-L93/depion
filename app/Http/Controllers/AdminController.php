@@ -583,7 +583,7 @@ class AdminController extends Controller
                                 'password' => Hash::make($insertData['initPassWord']),
                                 'rating' => $insertData['rating'],
                                 'beschikbaar' => $insertData['beschikbaar'],
-
+                                'settings' => ["notifications" => "0"],
                             ]
                         );
                         User::where('knsb_id', $insertData['knsb_id'])->update(['settings' => ["notifications" => "0"]]);
