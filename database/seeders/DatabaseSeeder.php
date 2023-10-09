@@ -15,25 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('configs')->insert([
-            'RoundsBetween_Bye' => 5,
-            'RoundsBetween' => 5,
-            'Club' => 5,
-            'Personal' => 5,
-            'Bye' => 5,
-            'Presence' => 5,
-            'Other' => 5,
-            'Start' => 50,
-            'Step' => 1,
-            'Name' => 'De Pion',
-            'Season' => '2023-2024',
-            'Admin' => 1,
-            'EndSeason' => 0,
-            'announcement' => 'Nieuw seizoen wordt opgestart',
-            'AbsenceMax' => 3,
-            'SeasonPart' => 13,
-            'presenceOrLoss' => 1,
-        ]);
 
         DB::table('users')->insert([
             "name" => "Frank Lambregts",
