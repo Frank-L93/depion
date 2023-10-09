@@ -15,7 +15,7 @@ class Round extends Model
      * @var array
      */
     protected $fillable = [
-        'round', 'date', 'published', 'ranking',
+        'uuid', 'round', 'date', 'published', 'ranking',
     ];
     // Table Name
     protected $table = 'rounds';
