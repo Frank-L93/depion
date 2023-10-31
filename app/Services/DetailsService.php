@@ -93,12 +93,7 @@ class DetailsService
                     }
                 } else {
                     $absence_max = Config::AbsenceMax();
-                    // Season parts
-                    $season_part = Config::SeasonPart();
-                    // filter this for the first X rounds.
-
                     $amount_absence = Game::where([['white', '=', $game->white], ['result', '=', 'Afwezigheid'], ['black', '=', 'Other']])->count();
-
 
                     if ($amount_absence > $absence_max) {
                         $absentGames = Game::where([['white', '=', $game->white], ['result', '=', 'Afwezigheid'], ['black', '=', 'Other']])->get();
@@ -106,19 +101,19 @@ class DetailsService
                         for ($i = 0; $i < $absence_max; $i++) {
                             if ($game->id == $absentGames[$i]->id) {
                                 if ($game->round_id < $round) {
-                                    $white_score = Config::Scoring("Other") * $white_ranking->LastValue2;
+                                    $white_score += Config::Scoring("Other") * $white_ranking->LastValue;
                                 } else {
-                                    $white_score = Config::Scoring("Other") * $white_ranking->LastValue;
+                                    $white_score += Config::Scoring("Other") * $white_ranking->Value;
                                 }
                             } else {
                             }
                         }
                     } else {
                         if ($game->round_id < $round) {
-                            $white_score = Config::Scoring("Other") * $white_ranking->LastValue2;
+                            $white_score += Config::Scoring("Other") * $white_ranking->LastValue;
+                        } elseif ($game->round_id > $round) {
                         } else {
-
-                            $white_score = Config::Scoring("Other") * $white_ranking->LastValue;
+                            $white_score += Config::Scoring("Other") * $white_ranking->value;
                         }
                     }
                 }
