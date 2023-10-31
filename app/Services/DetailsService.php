@@ -177,6 +177,8 @@ class DetailsService
 
                             $black_score = $black_result * $white_ranking->LastValue;
                         }
+                        $white_score += 5;
+                        $black_score += 5;
                     } elseif ($black_result == "1") {
 
                         if ($game->round_id < $round) {
