@@ -84,7 +84,7 @@ Ranglijst nog niet gepubliceerd
                                     <td>{{$Details->PlayerName($game->black)}}</td>
                                     <td>{{$game->result}}</td>
                                     <td>{{$game->round_id}}</td>
-                                    <td>{{$Details->CurrentScore($rank->user_id, $game->round_id)}}</td>
+                                    <td>{{$Details->CurrentScore($rank->user_id, $game->round_id, $game->id)}}</td>
                                 </tr>
                                @endforeach
 

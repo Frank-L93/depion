@@ -211,18 +211,20 @@ class DetailsService
         return $score;
     }
 
-    public function CurrentScore($player, $selectedRound)
+    public function CurrentScore($player, $selectedRound, $gameID)
     {
 
         // Get the Game;
-        $game = Game::where([['white', '=', $player], ['round_id', '=', $selectedRound]])->orWhere([['black', '=', $player], ['round_id', '=', $selectedRound]])->first();
+        $game = Game::where([['white', '=', $player], ['round_id', '=', $selectedRound], ['id', '=', $gameID]])->orWhere([['black', '=', $player], ['round_id', '=', $selectedRound], ['id', '=', $gameID]])->first();
         // Get the current Round to determine if round game round is earlier.
         $round = $this->LastRound();
+
 
         // Set score to 0;
         $score = 0;
 
         // Check for Absence Game;
+
         if ($game->white == $player && $game->result == "Afwezigheid") {
             // Set White Score to 0
             $white_score = 0;
