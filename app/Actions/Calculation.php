@@ -8,6 +8,9 @@ use App\Models\Config;
 use App\Models\User;
 use App\Models\Round;
 use App\Actions\TPRHelper;
+use Illuminate\Support\Str;
+
+use Illuminate\Support\Facades\Log;
 
 class Calculation
 {
@@ -22,6 +25,7 @@ class Calculation
 
     public function Calculate($round) // 3
     {
+
         // Make round an int (just in case it is passed on as a string)
         $round = $round * 1;
 
@@ -40,8 +44,10 @@ class Calculation
         }
 
         // Get all games.
-        $games = Game::where('round_id', '<=', $round)->get(); // Round 2 // Win of Joshua Round 1 & Afwezig in ronde 2
+        $games = Game::where('round_id', '<=', $round)->get();
+         // Round 2 // Win of Joshua Round 1 & Afwezig in ronde 2
         foreach ($games as $game) {
+
             // decide the result for white and for black
             if ($game->result == "Afwezigheid") {
                 $white_ranking = Ranking::where('user_id', $game->white)->first();
@@ -59,8 +65,14 @@ class Calculation
                     // Set the new created Ranking as white_ranking again.
                     $white_ranking = Ranking::where('user_id', $game->white)->first();
                 }
+                $white_absence = User::where('id', $game->white)->first();
+                // Defaults; //69.05
                 if ($white_ranking->score == 0) {
-                    $white_score = $white_ranking->value; // value 60
+
+                    if($white_absence->beschikbaar == 0){
+                        $white_score = $white_ranking->FirstValue;
+                    }else{
+                    $white_score = $white_ranking->value;} // 39
                 } else {
                     $white_score = $white_ranking->score;
                 }
@@ -108,17 +120,26 @@ class Calculation
                         }
                     }
                 }
+
                 $white_ranking->score = $white_score;
                 $white_ranking->save();
             } // Result is not Afwezigheid.
             else {
+                if(Str::contains($game->result, 'R')){
+                    $result = explode("-", $game->result);
+                    $white_result = $result[0];
+                    if($white_result == "1"){
+                        $white_result = "1R";
+                    }
+                    $black_result = $result[1];
+                }
+                else{
                 $result = explode("-", $game->result);
                 $white_result = $result[0];
                 $black_result = $result[1];
-
+                }
                 // Find white and black in the ranking
                 $white_ranking = Ranking::where('user_id', $game->white)->first();
-
 
                 // Check if player exist in Ranking, if not, add person to ranking.
                 if ($white_ranking == NULL) {
@@ -134,15 +155,20 @@ class Calculation
                     $white_ranking = Ranking::where('user_id', $game->white)->first();
                 }
                 $white_rating = User::where('id', $game->white)->first();
-
+                $white_absence = User::where('id', $game->white)->first();
                 // Defaults; //69.05
                 if ($white_ranking->score == 0) {
-                    $white_score = $white_ranking->value; // 60
+
+                    if($white_absence->beschikbaar == 0){
+                        $white_score = $white_ranking->FirstValue;
+                    }else{
+                    $white_score = $white_ranking->value;} // 39
                 } else {
                     $white_score = $white_ranking->score;
                 }
                 if ($game->black == "Bye") {
                 } else {
+                    $black_absence = User::where('id', $game->black)->first();
                     $black_ranking = Ranking::where('user_id', $game->black)->first();
 
                     // Check if player exist in Ranking, if not, add person to ranking.
@@ -160,13 +186,17 @@ class Calculation
                     }
                     $black_rating = User::where('id', $game->black)->first();
                     if ($black_ranking->score == 0) {
+                        if($black_absence->beschikbaar == 0){
+                            $black_score = $black_ranking->FirstValue;
+                        }else{
                         $black_score = $black_ranking->value;
+                        }
                     } else {
                         $black_score = $black_ranking->score;
                     }
                 }
 
-                $white_absence = User::where('id', $game->white)->first();
+
                 // Calculate the new score for white and black for this game or all games?
                 if ($game->black == "Bye") {
                     if ($game->round_id < $round) {
@@ -178,7 +208,7 @@ class Calculation
                 } elseif ($white_result == "1") {
                     if ($game->round_id < $round) {
 
-                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
                             $white_score += 1 * $black_ranking->FirstValue;
                         } else {
                             $white_score += 1 * $black_ranking->LastValue;
@@ -186,11 +216,10 @@ class Calculation
                         //
                     } elseif ($game->round_id > $round) {
                     } else {
-                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
-                            $white_score += 1 * $black_ranking->FirstValue;
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->FirstValue;
                         } else {
                             $white_score += 1 * $black_ranking->value;
-                        } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65 
+                        } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
                     }
                     $white_ranking->amount = $white_ranking->amount + 1;
                     $black_ranking->amount = $black_ranking->amount + 1;
@@ -198,53 +227,58 @@ class Calculation
 
                     $black_score += Config::Scoring("Presence");
                 } elseif ($white_result == "1R") {
-                    if ($game->round_id < $round) {
-                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
+                    if ($game->round_id < $round) {
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
                             $white_score += 1 * $black_ranking->FirstValue;
                         } else {
                             $white_score += 1 * $black_ranking->LastValue;
                         }  //
                     } elseif ($game->round_id > $round) {
                     } else {
-                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
-
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
                             $white_score += 1 * $black_ranking->FirstValue;
                         } else {
                             $white_score += 1 * $black_ranking->value;
-                        } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65 
+                        } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
                     }
                     $white_ranking->amount = $white_ranking->amount + 1;
 
                     $white_ranking->gamescore = $white_ranking->gamescore + 1;
                 } elseif ($white_result == 0.5) {   //69.05 += 0.5 * 69 = 69.05 + 34.5 = 103.60
                     if ($game->round_id < $round) {
-                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
-
+                            if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
                             $white_score += $white_result * $black_ranking->FirstValue;
                         } else {
                             $white_score += $white_result * $black_ranking->LastValue;
                         }
+                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
+                            $black_score += $black_result * $white_ranking->FirstValue;
+                        }
+                        else{
                         $black_score += $black_result * $white_ranking->LastValue;
+                        }
                     } elseif ($game->round_id > $round) {
                     } else {
-                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
-
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
                             $white_score += $white_result * $black_ranking->FirstValue;
                         } else {
                             $white_score += $white_result * $black_ranking->value;
                         }
+                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
+
+                            $black_score += $black_result * $white_ranking->FirstValue;
+                       }else{
                         $black_score += $black_result * $white_ranking->value;
+                       }
                     }
                     $white_ranking->amount = $white_ranking->amount + 1;
                     $black_ranking->amount = $black_ranking->amount + 1;
                     $white_ranking->gamescore = $white_ranking->gamescore + 0.5;
                     $black_ranking->gamescore = $black_ranking->gamescore + 0.5;
                 } elseif ($black_result == "1") {
-
-                    $black_absence = User::where('id', $game->black)->first();
                     if ($game->round_id < $round) {
-                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
+                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
                             $black_score += 1 * $white_ranking->FirstValue;
                         } else {
@@ -252,7 +286,7 @@ class Calculation
                         }
                     } elseif ($game->round_id > $round) {
                     } else {
-                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
+                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
                             $black_score += 1 * $white_ranking->FirstValue;
                         } else {
@@ -265,10 +299,8 @@ class Calculation
 
                     $white_score += Config::Scoring("Presence");
                 } elseif ($black_result == "1R") {
-
-                    $black_absence = User::where('id', $game->black)->first();
                     if ($game->round_id < $round) {
-                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
+                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
                             $black_score += 1 * $white_ranking->FirstValue;
                         } else {
@@ -276,7 +308,7 @@ class Calculation
                         }
                     } elseif ($game->round_id > $round) {
                     } else {
-                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
+                        if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
                             $black_score += 1 * $white_ranking->FirstValue;
                         } else {
@@ -286,6 +318,7 @@ class Calculation
 
                     $black_ranking->amount = $black_ranking->amount + 1;
                     $black_ranking->gamescore = $black_ranking->gamescore + 1;
+
                 } else // No result yet?
                 {
                     continue;
@@ -324,6 +357,7 @@ class Calculation
                         $black_ranking->save();
                     }
                 }
+
             }
         }
         $round_processed = Round::find($round);
