@@ -46,7 +46,7 @@
                         @endif
                         <td>{{$game->result}}</td>
                         @if(($game->white === auth()->user()->id) || (intval($game->black) === auth()->user()->id))
-                        <td>{{$Details->CurrentScore(auth()->user()->id, $round->id)}}</td>
+                        <td>{{$Details->CurrentScore(auth()->user()->id, $round->id, $game->id)}}</td>
                         @endif
                     </tr>
                     @endif
@@ -74,7 +74,7 @@
                         @endif
                         <td>{{$game->result}}</td>
                         @if(($game->white === auth()->user()->id) || (intval($game->black) === auth()->user()->id))
-                        <td>{{$Details->CurrentScore(auth()->user()->id, $round->id)}}</td>
+                        <td>{{$Details->CurrentScore(auth()->user()->id, $round->id, $game->id)}}</td>
                         @endif
                     </tr>
                     @endif
