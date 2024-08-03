@@ -78,6 +78,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/Admin/Game/Add/{Round}', 'AddGame');
     Route::get('/Admin/Presence/Add', 'AddPresence');
     Route::get('/Admin/RankingList/add', 'AddRanking');
+    Route::post('/Admin/RankingList/storeRanking', 'storeRanking');
     Route::get('/rounds/{Round}/rankings', 'PublishRanking');
     Route::get('/rounds/{Round}/games', 'PublishGames');
     Route::get('/recalculateTPR', 'RecalculateTPR');

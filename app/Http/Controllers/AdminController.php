@@ -260,11 +260,16 @@ class AdminController extends Controller
 
         // Update ranking of player
         $white_ranking = Ranking::where('user_id', $request->white)->first();
-        $white_ranking->color = $white_ranking->color + 1;
-        $white_ranking->save();
+        if($white_ranking !== null)
+        {
+            $white_ranking->color = $white_ranking->color + 1;
+            $white_ranking->save();
+        }
         $black_ranking = Ranking::where('user_id', $request->black)->first();
+        if($black_ranking !== null){
         $black_ranking->color = $black_ranking->color - 1;
         $black_ranking->save();
+        }
         return redirect('/Admin')->with('success', 'Partij toegevoegd aan ' . $request->round);
     }
     // User update functionality of the Admin
@@ -415,6 +420,7 @@ class AdminController extends Controller
     {
 
         $ranking_exist = Ranking::where('user_id', $request->player)->first();
+
         if ($ranking_exist == null) {
             $ranking = new Ranking;
             $ranking->user_id = $request->player;
