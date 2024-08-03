@@ -19,7 +19,7 @@ class PushController extends Controller
 
     /**
      * Store the PushSubscription.
-     * 
+     *
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse
      */
@@ -40,7 +40,7 @@ class PushController extends Controller
     }
     /**
      * Send Push Notifications to all users.
-     * 
+     *
      * @return \Illuminate\Http\Response
      */
     public function push($route, $message, $title, $type)
@@ -63,6 +63,7 @@ class PushController extends Controller
         } else {
             // For now send all Users a notificiation
             $users_to_notify = User::all();
+
             Notification::send(
                 $users_to_notify,
                 new PushDemo($message, $title, $num)

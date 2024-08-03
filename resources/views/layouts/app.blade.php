@@ -14,7 +14,7 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-      
+
     <script src="/js/app.js"></script>
     <link href="/css/app.css" rel="stylesheet" />
     <!-- Editable -->
@@ -32,10 +32,10 @@
         $(document).ready(function(){
          setInterval(function(){
       $("#funky").load(window.location.href + " #funky" );
-}, 10000);   
+}, 10000);
     });
     </script>
-    
+
 
     <!-- DataTable -->
 
@@ -58,7 +58,7 @@
     @auth
     @if(settings()->has('notifications'))
     @if(settings()->get('notifications') == 2 OR settings()->get('notifications') == 3)
-    <script src="{{ asset('js/enable-push.js') }}" defer></script>
+
     @endif
     @endif
     @endauth

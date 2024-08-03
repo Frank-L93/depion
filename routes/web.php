@@ -9,6 +9,7 @@ use App\Http\Controllers\PresencesController;
 use App\Http\Controllers\RankingsController;
 use App\Http\Controllers\RoundsController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\NotificationsController;
 use Illuminate\Support\Facades\Auth;
 
 /*
@@ -51,7 +52,9 @@ Route::controller(SettingsController::class)->group(function () {
     Route::post('/changePassword', 'ChangePassword')->name('changePassword')->middleware('auth');
     Route::post('/changeEmail', 'ChangeEmail')->name('changeEmail')->middleware('auth');
 });
-Route::get('notifications', 'NotificationsController@read')->name('readNotifications')->middleware('auth');
+Route::controller(NotificationsController::class)->group(function(){
+    Route::get('notifications', 'read')->name('readNotifications')->middleware('auth');
+});
 
 # End User Group
 

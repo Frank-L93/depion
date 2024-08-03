@@ -30,7 +30,11 @@ class MatchGames
 
         $last_player_to_pair = end($players_to_pair_with_rating);
         $count_players_rated = count($players_to_pair_with_rating);
+        if($count_players_rated < 2){
+            $count_players_rated = 2;
+        }
         $non_last_player_to_pair = $players_to_pair_with_rating[$count_players_rated - 2];
+
         if ($this->CheckIfOkToPairThisWay($last_player_to_pair["rating"], $non_last_player_to_pair["rating"]) == true) {
             $playerstopair = $this->moveElement($playerstopair, $count_players_rated - 1, $count_players_rated - rand(2, $count_players_rated - 1));
         } else {
@@ -74,6 +78,10 @@ class MatchGames
         if ($bye_necessary == 1) {
             Bye:
             $bye = rand(0, count($playerstopair));
+            if ($bye == count($playerstopair))
+            {
+                $bye = $bye - 1;
+            }
             if (count($playerstopair) == 1) {
                 $bye = 0;
             }

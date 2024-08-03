@@ -13,6 +13,8 @@ use App\Models\Ranking;
 use App\Models\Game;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
+use function PHPUnit\Framework\isEmpty;
+
 class PushDemo extends Notification
 {
     use Queueable;
@@ -80,17 +82,25 @@ class PushDemo extends Notification
             return ['mail'];
         }
 
-        if ($notifiable->settings()->get('notifications') == 1) {
+        if(!isEmpty($notifiable->settings()->get('notifications')))
+        {
+            if ($notifiable->settings()->get('notifications') == 1) {
             return ['mail', 'database'];
-        } elseif ($notifiable->settings()->get('notifications') == 2) {
-            return [WebPushChannel::class, 'mail', 'database'];
-        } elseif ($notifiable->settings()->get('notifications') == 3) {
-            return [WebPushChannel::class, 'database'];
-        } elseif ($notifiable->settings()->get('notifications') == 4) {
-            return ['NexMo', 'database'];
-        } elseif ($notifiable->settings()->get('notifications') == 5) {
-            return ['database'];
-        } else {
+            } elseif ($notifiable->settings()->get('notifications') == 2) {
+                return ['mail', 'database'];
+            } elseif ($notifiable->settings()->get('notifications') == 3) {
+                return ['database'];
+            } elseif ($notifiable->settings()->get('notifications') == 4) {
+                return ['NexMo', 'database'];
+            } elseif ($notifiable->settings()->get('notifications') == 5) {
+                return ['database'];
+
+            }
+            else {
+                return ['database'];
+            }
+        }
+        else {
             return ['database'];
         }
     }

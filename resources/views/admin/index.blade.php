@@ -24,7 +24,7 @@
                         <li>Vul scores in</li>
                         <li>Bereken stand</li>
                     </ul>
-                
+
                     </div>
                 </div>
                 <div class="card text-black bg-light mb-3" style="max-width: 25em;">
@@ -36,7 +36,7 @@
                 <ul>
                     <li>Stel Seizoeneinde in op 1 onder Configuratie</li>
                     <li>Reset via knop die hieronder verschijnt</li>
-                    <li>Verwijder eventuele gebruikers in je Database (Hier komt nog een functie voor!)</li> 
+                    <li>Verwijder eventuele gebruikers uit de gebruikerslijst</li>
                     <li>Laad nieuwe Ratinglijst</li>
                     <li>Genereer Ranglijst</li>
                     <li>Creëer nieuwe rondes</li>
@@ -50,10 +50,10 @@
                 @endif
                 @endforeach
         </div>
-    </div>   
-                </div>       
+    </div>
+                </div>
                 @endauth
-            </div>  
+            </div>
      </div>
 </div>
 <div id="_token" class="hidden" data-token="{{ csrf_token() }}"></div>
@@ -79,8 +79,8 @@
     <li class="nav-item">
         <a class="nav-link" href="#games" role="tab" data-toggle="tab">Partijen</a>
     </li>
-   
-    
+
+
 </ul>
 <div class="tab-content">
     <br>
@@ -100,7 +100,7 @@
         </p>
     </div>
     <div role="tabpanel" class="tab-pane" id="presences">
-        
+
         <p>
             @include('admin.presences')
         </p>
@@ -150,8 +150,8 @@
                     name:'white',
                     url:'/Admin/Games/update',
                     source: "/Admin/users/list"
-                });  
-           
+                });
+
                 $('.black').editable({
                     type: 'select',
                     name:'black',
@@ -191,7 +191,7 @@
                 type: 'number',
                 name: 'knsb_id',
                 url:'/Admin/Users/update',
-            }); 
+            });
              $('.beschikbaar').editable({
                 type: 'select',
                 name: 'beschikbaar',
@@ -200,6 +200,6 @@
                             {value: "0", text: 'Standaard Niet Aanwezig'},
                             {value: "1", text: 'Standaard Aanwezig'},
                         ]
-            }); 
+            });
         </script>
 @endsection

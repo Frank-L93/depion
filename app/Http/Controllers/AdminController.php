@@ -510,7 +510,7 @@ class AdminController extends Controller
         $file = $request->file('csv_file');
 
 
-        // File Details 
+        // File Details
         $filename = $file->getClientOriginalName();
 
         $extension = $file->getClientOriginalExtension();
@@ -571,7 +571,7 @@ class AdminController extends Controller
                     // Otherwise create.
                     $exist = User::where('knsb_id', $insertData['knsb_id'])->get();
                     if ($exist->isEmpty()) {
-                        // Create so pass password and name. Settings are set when logged in for first time. 
+                        // Create so pass password and name. Settings are set when logged in for first time.
                         User::updateOrCreate(
                             [
                                 'knsb_id' => $insertData['knsb_id'],
@@ -619,7 +619,7 @@ class AdminController extends Controller
         $file = $request->file('csv_file');
 
 
-        // File Details 
+        // File Details
         $filename = $file->getClientOriginalName();
 
         $extension = $file->getClientOriginalExtension();

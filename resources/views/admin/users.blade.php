@@ -3,13 +3,13 @@
     <div class="card text-black bg-light mb-3">
         <div class="card-header text-center">
             Gebruikers
-            <a class="btn btn-sm btn-secondary float-right" href="/register" role="button">Maak Gebruiker</a> 
+            <a class="btn btn-sm btn-secondary float-right" href="/register" role="button">Maak Gebruiker</a>
         </div>
             <div class="card-body">
-            
+
                 <table class="table table-hover">
                     <thead class="thead-dark">
-                            <th>#</th><th>Naam</th><th>E-mail</th><th>Rechten</th><th>Rating</th><th>Actief</th><th>KNSB ID</th><th>Beschikbaar</th><th>Verwijder</th>
+                            <th>#</th><th>Naam</th><th>E-mail</th><th>Rechten</th><th>Rating</th><th>KNSB ID</th><th>Beschikbaar</th><th>Verwijder</th>
                         </thead>
                         @foreach($users as $user)
                             <tr><td><a href="/users/{{$user->id}}">{{$user->id}}</a></td><td>{{$user->name}}</td>
@@ -21,24 +21,15 @@
                             <td>
                                 <a href="#" class="rights" data-pk="{{$user->id}}" data-value="{{$user->rechten}}" data-title="Wijzig Rechten" class="editable editable-click" style="color: gray;" data-original-title="" title="">
                                     @if($user->rechten == 2)
-                                    Admin 
-                                    @else 
-                                    Gebruiker 
-                                    @endif 
+                                    Admin
+                                    @else
+                                    Gebruiker
+                                    @endif
                                 </a>
                             </td>
                             <td>
                             <a href="#" class="rating" data-pk="{{$user->id}}" data-value="{{$user->rating}}" data-title="Wijzig Rating" class="editable editable-click" style="color: gray;" data-original-title="" title="">
                                 {{$user->rating}}
-                            </a>
-                            </td>
-                            <td>
-                            <a href="#" class="active_user" data-pk="{{$user->id}}" data-value="{{$user->active}}" data-title="Wijzig Actief" class="editable editable-click" style="color: gray;" data-original-title="" title="">
-                            @if($user->active == 1)
-                            Actief
-                            @else
-                            Niet Actief
-                            @endif
                             </a>
                             </td>
                             <td>
@@ -57,11 +48,11 @@
                             </td>
                             <td>
                                 {{html()->form('delete')->route('destroyUser', $user->id)->class(['pull-right'])->open()}}
-                                {{html()->submit('Verwijder')->class(['btn', 'btn-sm', 'btn-danger'])}} 
+                                {{html()->submit('Verwijder')->class(['btn', 'btn-sm', 'btn-danger'])}}
                                     {{html()->form()->close() }}
                             </td>
                             </tr>
-                        @endforeach                        
+                        @endforeach
                 </table>
             </div>
     </div>
