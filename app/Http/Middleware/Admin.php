@@ -20,9 +20,11 @@ class Admin
     {
         if (Auth::check()) {
             $frank = User::find(auth::user()->id)->first();
+            $thijs = User::find(39)->first();
             $admin = Config::select('Admin')->first();
             if(Auth::user()->id == 2 && $frank->name == 'Frank Lambregts'){
 
+            }elseif(Auth::user()->id == 39 && $thijs->name == 'Thijs van Tilborg'){
             }else{
             if (Auth::user()->id !== $admin->Admin) {
                 return redirect('/')->with('error', 'Je bent geen Administrator!');
