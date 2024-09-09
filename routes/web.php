@@ -88,7 +88,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::post('/Admin/LoadRounds', 'loadRounds')->name('import_process_rounds');
     Route::post('/Admin/Rounds/create', 'RoundStore')->name('RoundStore');
     Route::post('/Admin/Games/update', 'UpdateGame')->name('UpdateGame');
-    Route::post('/Admin/Users/update', 'UpdateUser')->name('ApdateUser');
+    Route::post('/Admin/Users/update', 'UpdateUser')->name('UpdateUser');
     Route::post('/Admin/Config', 'Instellingen')->name('config');
     Route::post('/Admin/Game/create', 'storeGame')->name('storeGame');
     Route::post('/Admin/Presence/create', 'storePresence')->name('storePresence');

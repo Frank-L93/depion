@@ -140,9 +140,8 @@
                             {value: "1-0", text: '1-0'},
                             {value: "0.5-0.5", text: '0.5-0.5'},
                             {value: "0-1", text: '0-1'},
-{value: "0-1", text: '0-1'},
-{value: "0-1R", text: '0-1R'},
-{value: "1-0R", text: '1-0R'},
+                            {value: "0-1R", text: '0-1R'},
+                            {value: "1-0R", text: '1-0R'},
                         ]
             });
                 $('.white').editable({

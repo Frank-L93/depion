@@ -17,7 +17,7 @@ return [
         </ul>
         <p>Er wordt getracht zo min mogelijk persoonlijke gegevens te verzamelen om de applicatie te laten functioneren. <br>
         Logischerwijs is er een database met enkele persoonlijke gegevens aanwezig. Er wordt zorg voor gedragen deze gegevens zo goed mogelijk te beschermen.</p>
-        
+
         <small>Versie 1-2020 - Copyright Frank Lambregts</small>',
     ],
     'index' =>
