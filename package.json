@@ -7,14 +7,14 @@
     },
     "devDependencies": {
         "@rollup/plugin-inject": "^5.0.4",
-        "axios": "^1.1.2",
+        "axios": "*",
         "laravel-vite-plugin": "^0.7.5",
         "vite": "^4.0.0"
     },
     "dependencies": {
         "@popperjs/core": "^2.11.8",
         "bootstrap": "^5.3.1",
-        "bootstrap-editable": "^1.5",
+        "bootstrap-editable": "*",
         "bootstrap-table": "^1.22.1",
         "datatables.net-dt": "^1.13.6",
         "jquery": "^3.7.0",
