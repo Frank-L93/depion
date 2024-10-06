@@ -82,6 +82,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/rounds/{Round}/rankings', 'PublishRanking');
     Route::get('/rounds/{Round}/games', 'PublishGames');
     Route::get('/recalculateTPR', 'RecalculateTPR');
+    Route::get('/Admin/RankingList/{Ranking}', 'EditRanking');
 
 
     Route::post('/Admin/LoadRatings', 'loadRatings')->name('import_process');
@@ -93,6 +94,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::post('/Admin/Game/create', 'storeGame')->name('storeGame');
     Route::post('/Admin/Presence/create', 'storePresence')->name('storePresence');
     Route::post('/Admin/Ranking/create', 'storeRanking')->name('storeRanking');
+    Route::post('/Admin/RankingList/StoreUpdatedRanking', 'StoreUpdatedRanking')->name('StoreUpdatedRanking');
 
     // Administrator-pages (deletes)
     Route::delete('/Admin/{Presence}/Presences', 'DestroyPresences')->name('destroyPresences');

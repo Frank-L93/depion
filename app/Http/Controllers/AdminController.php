@@ -748,4 +748,22 @@ class AdminController extends Controller
         $a->push('Admin', 'De stand is bijgewerkt, bekijk hem nu!', 'Stand', '1'); // Get results of round
         return redirect('/Admin')->with('success', 'Stand is gepubliceerd!');
     }
+
+    public function EditRanking($ranking){
+
+        $rank = Ranking::find($ranking);
+        $player = User::find($rank->user_id);
+        return view('admin.editranking')->with('player', $player)->with('ranking', $rank);
+    }
+
+    public function StoreUpdatedRanking(request $request)
+    {
+        $player = User::find($request->player);
+        $rank = Ranking::where('user_id', $request->player)->first();
+        $rank->score = $request->score;
+        $rank->value = $request->value;
+        $rank->save();
+
+        return redirect('/Admin')->with('success', 'Ranking van '.$player->name.'bijgewerkt!');
+    }
 }
