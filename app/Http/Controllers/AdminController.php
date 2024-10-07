@@ -22,6 +22,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Http\Controllers\iOSNotificationsController;
+use App\Services\DetailsService;
 use Carbon\Carbon;
 use Ramsey\Uuid\Uuid;
 
@@ -765,5 +766,108 @@ class AdminController extends Controller
         $rank->save();
 
         return redirect('/Admin')->with('success', 'Ranking van '.$player->name.'bijgewerkt!');
+    }
+
+    public function BackRanking()
+    {
+        // Current round
+        $b = new DetailsService();
+        $currentRound = $b->CurrentRound();
+        $round = Round::find($currentRound);
+
+        $games = Game::where('round_id', $round->id)->get();
+
+        foreach($games as $game){
+            // White
+            $currentScore_white = $b->CurrentScore($game->white, $round->id, $game->id);
+
+            $rank_white = Ranking::where('user_id', $game->white)->first();
+
+            $rank_white->score = $rank_white->score - $currentScore_white;
+            $rank_white->value = $rank_white->LastValue;
+            $rank_white->LastValue = $rank_white->LastValue2;
+            $rank_white->amount = $rank_white->amount - 1;
+            $rank_white->round = $rank_white->round - 1;
+            if($game->black == "Bye" || $game->black == "Other")
+            {
+
+            }else{
+                $currentScore_black = $b->CurrentScore($game->black, $round->id, $game->id);
+                $rank_black = Ranking::where('user_id', $game->black)->first();
+                $rank_black->score = $rank_black->score - $currentScore_black;
+                $rank_black->value = $rank_black->LastValue;
+                $rank_black->LastValue = $rank_black->LastValue2;
+                $rank_black->amount = $rank_black->amount - 1;
+                $rank_black->round = $rank_white->round - 1;
+            }
+
+            if ($game->result == "Afwezigheid") {
+            }else{
+                if(Str::contains($game->result, 'R')){
+                $result = explode("-", $game->result);
+                $white_result = $result[0];
+                $black_result = $result[1];
+                    if($black_result == "1R")
+                    {
+                        $black_result = "1";
+                    }else{
+                    $black_result = $result[1];
+                    }
+                }
+                else{
+                    $result = explode("-", $game->result);
+                    $white_result = $result[0];
+                    $black_result = $result[1];
+                }
+                $rank_white->gamescore = $rank_white->gamescore - $white_result;
+            }
+
+
+            if($game->black == "Bye" || $game->black == "Other")
+            {
+
+            }else{
+                $rating_black = User::find($game->black)->first();
+                $rating_white = User::find($game->white)->first();
+                $rank_white->ratop = $rank_white->ratop - $rating_black->rating;
+                $rank_black->ratop = $rank_black->ratop - $rating_white->rating;
+            }
+            $rank_white->save();
+            if($game->black == "Bye" || $game->black == "Other")
+            {
+            }
+            else{
+            $rank_black->save();
+            }
+            // Calculate new TPR
+            if($game->black == "Bye" || $game->black == "Other")
+            {
+            }
+            else{
+                $a = new Calculation();
+
+                $rank_white->tpr = $a->calculateTPR($game->white);
+                $rank_white->save();
+                $rank_black->tpr = $a->calculateTPR($game->black);
+                $rank_black->save();
+            }
+
+        }
+        // We hebben alle rankings voor partijen gecorrigeerd. Nu nog de rankings voor spelers die geen partij hadden
+
+        $toCorrect = Ranking::where('round', $currentRound)->get();
+
+        foreach($toCorrect as $rank){
+            $rank->round = $rank->round - 1;
+            $rank->value = $rank->LastValue;
+            $rank->LastValue = $rank->LastValue2;
+            $rank->save();
+        }
+
+        $round->processed = NULL;
+        $round->save();
+        return redirect('/Admin')->with('success', 'Ranglijst teruggezet');
+        // score van een speler in de current round
+        //
     }
 }

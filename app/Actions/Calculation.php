@@ -36,6 +36,7 @@ class Calculation
         // Also reset amount, gamescore & ratop as we loop through all games again. So if we keep it the value it already has, it will duplicate itself!
 
         foreach ($rankings as $ranking) {
+            $ranking->round = $round;
             $ranking->score = 0;
             $ranking->amount = 0;
             $ranking->gamescore = 0;

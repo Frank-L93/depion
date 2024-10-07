@@ -4,6 +4,7 @@
             Ranglijst
             @if(count($ranking)>0)
                 <a class="btn btn-sm btn-secondary float-right" href="/Admin/RankingList/add" role="button">Voeg iemand toe</a>
+                <a class="btn btn-sm btn-secondary float-right" href="/Admin/RankingList/back" role="button">Zet de ranglijst een ronde terug</a>
             @else
                 <a class="btn btn-sm btn-secondary float-right" href="/Admin/RankingList/create" role="button">Genereer Ranglijst</a>
             @endif
