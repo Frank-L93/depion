@@ -430,6 +430,7 @@ class DetailsService
                 } elseif ($white_result == 0.5) {   //69.05 += 0.5 * 69 = 69.05 + 34.5 = 103.60
 
                     if ($game->round_id < $round) {
+
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 || $game->round_id < 6)) {
                         $white_score += $white_result * $black_ranking->FirstValue;
                     } else {

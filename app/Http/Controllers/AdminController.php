@@ -166,11 +166,14 @@ class AdminController extends Controller
 
                     if ($lowest_value_set ==  Config::InitRanking('start')) {
                         $ranking->value = $lowest_value_set;
+                        $ranking->FirstValue = $lower_value_set;
                     } else {
                         $ranking->value = $lowest_value->value - 1;
+                        $ranking->FirstValue = $lowest_value->value - 1;
                     }
                 } else {
                     $ranking->value = $player_closest_by->value;
+                    $ranking->FirstValue = $player_closest_by->value;
                 }
 
                 $ranking->save();
