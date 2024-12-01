@@ -9,6 +9,7 @@ use App\Models\Config;
 use App\Http\Controllers\PushController;
 use App\Http\Controllers\iOSNotificationsController;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class MatchGames
 {
@@ -29,13 +30,18 @@ class MatchGames
         }
 
         $last_player_to_pair = end($players_to_pair_with_rating);
+        Log::info('Last Player to pair: '.$last_player_to_pair["player"]);
         $count_players_rated = count($players_to_pair_with_rating);
+        Log::info('Count Player to pair: '.$count_players_rated);
         if($count_players_rated < 2){
             $count_players_rated = 2;
         }
         $non_last_player_to_pair = $players_to_pair_with_rating[$count_players_rated - 2];
 
-        if ($this->CheckIfOkToPairThisWay($last_player_to_pair["rating"], $non_last_player_to_pair["rating"]) == true) {
+        Log::info('Non Player to pair: '.$non_last_player_to_pair["player"]);
+        if ($this->CheckIfOkToPairThisWay($non_last_player_to_pair["rating"], $last_player_to_pair["rating"]) == true) {
+            Log::info('CheckIfOk: true');
+            Log::info('Moving player:'.$players[$count_players_rated - 1]["id"]);
             $playerstopair = $this->moveElement($playerstopair, $count_players_rated - 1, $count_players_rated - rand(2, $count_players_rated - 1));
         } else {
         }
@@ -50,13 +56,14 @@ class MatchGames
         }
         $this->MatchGame($playerstopair, $round, $bye_necessary);
     }
-    public function CheckIfOkToPairThisWay($a, $b)
+    public function CheckIfOkToPairThisWay($b, $a)
     {
         $c = 0;
         $math = rand(0, 6);
         if ($a - $b > 500) {
             $c = ($a / 100 - $b / 100);
         }
+
         if ($math + $c > 10) {
             return false;
         } else {
@@ -147,6 +154,7 @@ class MatchGames
     }
     public function validOpponent($player_one, $player_two, $round, $amount_matched, $amount_to_match)
     {
+        Log::info('We are trying to pair to: '.$player_one." against ".$player_two." with the following settings: ".$amount_matched."&".$amount_to_match);
         if ($amount_to_match - $amount_matched < 3) {
             return true;
         }
@@ -225,7 +233,7 @@ class MatchGames
         }
         $color_value = Ranking::where('user_id', $player_one)->first();
         $color = $color_value->color;
-
+        Log::info('We are trying to pair to: '.$player_one." against ".$player_two);
 
 
         $color_value_black = Ranking::where('user_id', $player_two)->first();

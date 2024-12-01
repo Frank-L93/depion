@@ -360,7 +360,27 @@ class AdminController extends Controller
                 }
             }
         }
-        return redirect('/Admin')->with('success', 'Aanwezigheden aangemaakt');
+
+        $non_available_users = User::where('beschikbaar', 0)->get();
+        $rounds = Round::all();
+        foreach($non_available_users as $user){
+             //The date to compare
+            $checkDate = date( "Y-m-d H:i:s", strtotime( "today -2 days" ) );
+
+            if($user->updated_at > $checkDate){
+
+            foreach($rounds as $round){
+                if($round->published == 0){
+                    $presence_exist = Presence::where([['user_id', '=', $user->id], ['round', '=', $round->round]])->first();
+                    if(!$presence_exist == null)
+                    {
+                        $presence_exist->delete();
+                    }
+                }
+             }
+            }
+        }
+        return redirect('/Admin')->with('success', 'Aanwezigheden aangepast');
     }
 
     public function AddPresence()
