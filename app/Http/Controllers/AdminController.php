@@ -65,6 +65,7 @@ class AdminController extends Controller
 
         $round = new Round;
         $round->round = $request->input('round');
+        $round->uuid = base64_encode(rand(0, 999999));
         $round_exist = Round::where('round', $round->round)->get();
         if ($round_exist->isEmpty()) {
             $round->date = $request->input('date');
@@ -527,6 +528,7 @@ class AdminController extends Controller
         $configs->announcement = $request->input('announcement');
         $configs->AbsenceMax = $request->input('AbsenceMax');
         $configs->SeasonPart = $request->input('SeasonPart');
+        $configs->maximale_aanmeldtijd = $request->input('maximale_aanmeldtijd');
         //$configs->Admin = $request->input('Admin');
         $configs->save();
         return redirect('/Admin')->with('success', 'Instellingen aangepast!');

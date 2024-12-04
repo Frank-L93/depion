@@ -8,8 +8,10 @@ use App\Models\Presence;
 use App\Models\Round;
 use App\Models\User;
 use App\Models\Game;
+use App\Models\Config;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 
 class PresencesController extends Controller
 {
@@ -63,7 +65,9 @@ class PresencesController extends Controller
         ]);
 
 
+
         foreach ($request->input('round') as $round) {
+
             $user = auth()->user()->id;
             $presence_exist = Presence::where('user_id', $user)->where('round', $round)->get();
 
@@ -92,13 +96,48 @@ class PresencesController extends Controller
                         return redirect('presences')->with('error', 'Aanwezigheid niet aangepast! Je hebt al een partij in deze ronde gespeeld!');
                     }
                 }
-                $presence->save();
-            } else {
-                $round_info = Round::where('round', $round)->first();
-                return redirect('/presences')->with('error', 'Er ging iets fout vanaf ronde ' . $round . '(' . $round_info->date . '). Als je je aanwezigheid wilt aanpassen, gebruik dan het potloodje!');
-            }
-        }
+                else{
+                    // Check if now is later than last time
+                    $round_object = Round::where('round', $round)->withCasts(['date' => 'datetime'])->get();
+                    $round_date = $round_object[0]->date;
+                    $current_time = now()->timezone('Europe/Amsterdam');
+                    if($current_time < $round_date){
+                        // do nothing
+                    }
+                    else
+                    {
+                        $time_to_check = explode(':', Config::MaxAanmeldTijd());
+                        $hour = $time_to_check[0] * 1;
+                        if($hour !== 0)
+                        {
+                            // if 0 we asume it is not filled.
+                            $minutes = $time_to_check[1] * 1;
+                            if($current_time->month == $round_date->month && $current_time->year == $round_date->year && $current_time->day == $round_date->day && $current_time->hour >= $hour && $current_time->minute > $minutes )
+                            {
+                                return redirect('/presences')->with('error', 'Er ging iets fout vanaf ronde '. $round.' ('. $round_date->format('d-m-Y'). ')! Je kunt niet meer aanmelden voor deze ronde, dit kon tot maximaal: '.Config::MaxAanmeldTijd());
+                            }
+                            elseif($current_time->month == $round_date->month && $current_time->year == $round_date->year && $current_time->day == $round_date->day && $current_time->hour < $hour)
+                            {
 
+                                $presence->save();
+                                return redirect('/presences')->with('success', 'Aanwezigheid doorgegeven!');
+                            }
+                            elseif($current_time > $round_date)
+                            {
+                                return redirect('/presences')->with('error', 'Er ging iets fout vanaf ronde '. $round.' ('. $round_date->format('d-m-Y'). ')! Je kunt niet meer aanmelden voor deze ronde, dit kon tot maximaal: '.Config::MaxAanmeldTijd());
+                            }
+                        }
+                    }
+                }
+                $presence->save();
+
+                }
+                else{
+                    $round_info = Round::where('round', $round)->first();
+                    return redirect('/presences')->with('error', 'Er ging iets fout vanaf ronde ' . $round . '(' . $round_info->date . '). Als je je aanwezigheid wilt aanpassen, gebruik dan het potloodje!');
+
+                }
+            }
         return redirect('/presences')->with('success', 'Aanwezigheid doorgegeven!');
     }
 

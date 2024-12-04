@@ -15,7 +15,7 @@ class Config extends Model
      * @var array
      */
     protected $fillable = [
-        'RoundsBetween_Bye', 'RoundsBetween', 'Club', 'Personal', 'Bye', 'Other', 'Presence', 'Start', 'Step', 'Name', 'Season', 'Admin', 'AbsenceMax', 'announcement', 'SeasonPart',
+        'RoundsBetween_Bye', 'RoundsBetween', 'Club', 'Personal', 'Bye', 'Other', 'Presence', 'Start', 'Step', 'Name', 'Season', 'Admin', 'AbsenceMax', 'announcement', 'SeasonPart', 'maximale_aanmeldtijd',
     ];
     public static function RoundsBetween($bye)
     {
@@ -98,5 +98,12 @@ class Config extends Model
         $value = Config::select('Season')->first();
 
         return $value->Season;
+    }
+
+    public static function MaxAanmeldTijd()
+    {
+        $value = Config::select('maximale_aanmeldtijd')->first();
+
+        return $value->maximale_aanmeldtijd;
     }
 }

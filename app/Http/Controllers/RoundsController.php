@@ -45,6 +45,7 @@ class RoundsController extends Controller
         ]);
 
         $round = new Round;
+        $round->uuid = base64_encode(rand(0, 999999));
         $round->round = $request->input('round');
         $round_exist = Round::where('round', $round->round)->get();
         if ($round_exist->isEmpty()) {
