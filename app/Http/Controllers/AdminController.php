@@ -259,7 +259,12 @@ class AdminController extends Controller
         $game = new Game;
         $game->white = $request->white;
         $game->black = $request->black;
-        $game->result = "0-0";
+        if($request->black == "Bye"){
+            $game->result = "1-0";
+        }
+        else{
+            $game->result = "0-0";
+        }
         $game->round_id = $request->round;
         $game->save();
 
@@ -270,10 +275,12 @@ class AdminController extends Controller
             $white_ranking->color = $white_ranking->color + 1;
             $white_ranking->save();
         }
+        if(!$request->black == "Bye"){
         $black_ranking = Ranking::where('user_id', $request->black)->first();
-        if($black_ranking !== null){
-        $black_ranking->color = $black_ranking->color - 1;
-        $black_ranking->save();
+            if($black_ranking !== null){
+                $black_ranking->color = $black_ranking->color - 1;
+                $black_ranking->save();
+            }
         }
         return redirect('/Admin')->with('success', 'Partij toegevoegd aan ' . $request->round);
     }
