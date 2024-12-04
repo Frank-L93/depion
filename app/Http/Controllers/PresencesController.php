@@ -100,34 +100,28 @@ class PresencesController extends Controller
                     // Check if now is later than last time
                     $round_object = Round::where('round', $round)->withCasts(['date' => 'datetime'])->get();
                     $round_date = $round_object[0]->date;
-                    $current_time = now()->timezone('Europe/Amsterdam');
-                    if($current_time < $round_date){
-                        // do nothing
-                    }
-                    else
+                    $day_before_round_date = $round_date->add('-1 day');
+                    $time_to_check = explode(':', Config::MaxAanmeldTijd());
+                    $hour = $time_to_check[0] * 1;
+                    $minutes = $time_to_check[1] * 1;
+                    if($hour == 0 & $minutes == 0)
                     {
-                        $time_to_check = explode(':', Config::MaxAanmeldTijd());
-                        $hour = $time_to_check[0] * 1;
-                        if($hour !== 0)
-                        {
-                            // if 0 we asume it is not filled.
-                            $minutes = $time_to_check[1] * 1;
-                            if($current_time->month == $round_date->month && $current_time->year == $round_date->year && $current_time->day == $round_date->day && $current_time->hour >= $hour && $current_time->minute > $minutes )
-                            {
-                                return redirect('/presences')->with('error', 'Er ging iets fout vanaf ronde '. $round.' ('. $round_date->format('d-m-Y'). ')! Je kunt niet meer aanmelden voor deze ronde, dit kon tot maximaal: '.Config::MaxAanmeldTijd());
-                            }
-                            elseif($current_time->month == $round_date->month && $current_time->year == $round_date->year && $current_time->day == $round_date->day && $current_time->hour < $hour)
-                            {
 
-                                $presence->save();
-                                return redirect('/presences')->with('success', 'Aanwezigheid doorgegeven!');
-                            }
-                            elseif($current_time > $round_date)
-                            {
+                    }
+                    else{
+                        $check_date = $day_before_round_date->setTime($hour, $minutes);
+
+                        $current_time = now()->timezone('Europe/Amsterdam');
+                        if($current_time < $check_date){
+                            // do nothing
+                        }
+                        else
+                        {
                                 return redirect('/presences')->with('error', 'Er ging iets fout vanaf ronde '. $round.' ('. $round_date->format('d-m-Y'). ')! Je kunt niet meer aanmelden voor deze ronde, dit kon tot maximaal: '.Config::MaxAanmeldTijd());
-                            }
                         }
                     }
+
+
                 }
                 $presence->save();
 
