@@ -2,12 +2,15 @@
     <div class="card text-black bg-light mb-3">
         <div class="card-header text-center">
             Ranglijst
+            <div>
             @if(count($ranking)>0)
-                <a class="btn btn-sm btn-secondary float-right" href="/Admin/RankingList/add" role="button">Voeg iemand toe</a>
+                <a class="btn btn-sm btn-danger float-left mx-2" href="/Admin/RankingList/reset" role="button">Reset de ranglijst</a>
+                <a class="btn btn-sm btn-primary float-left mx-2" href="/Admin/RankingList/add" role="button">Voeg iemand toe</a>
                 <a class="btn btn-sm btn-secondary float-right" href="/Admin/RankingList/back" role="button">Zet de ranglijst een ronde terug</a>
             @else
                 <a class="btn btn-sm btn-secondary float-right" href="/Admin/RankingList/create" role="button">Genereer Ranglijst</a>
             @endif
+            </div>
         </div>
             <div class="card-body">
                 <table class="table table-hover">

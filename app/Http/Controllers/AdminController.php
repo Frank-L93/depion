@@ -902,4 +902,15 @@ class AdminController extends Controller
         // score van een speler in de current round
         //
     }
+
+    public function ResetRanking()
+    {
+        Ranking::truncate();
+        $rounds = Round::all();
+        foreach($rounds as $round){
+            $round->processed = NULL;
+            $round->save();
+        }
+        return redirect('/Admin')->with('success', 'Ranglijst verwijderd');
+    }
 }
