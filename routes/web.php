@@ -48,7 +48,7 @@ Route::post('/presences/{id}/edit', [PresencesController::class, 'update'])->nam
 
 Route::controller(SettingsController::class)->group(function () {
     Route::get('settings', 'index')->middleware('auth');
-    Route::patch('settings', 'update')->name('settings.update')->middleware('auth');
+    Route::post('settings', 'update')->name('settings.update')->middleware('auth');
     Route::post('/changePassword', 'ChangePassword')->name('changePassword')->middleware('auth');
     Route::post('/changeEmail', 'ChangeEmail')->name('changeEmail')->middleware('auth');
 });

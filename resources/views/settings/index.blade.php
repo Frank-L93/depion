@@ -11,7 +11,7 @@
                 Wachtwoord
                 </div>
                 <div class="card-body">
-                
+
                     <form class="form-horizontal" method="POST" action="{{ route('changePassword') }}">
                         {{ csrf_field() }}
 
@@ -99,16 +99,13 @@
                 Voorkeuren
                 </div>
                 <div class="card-body">
-                {!! Form::model($user, [
-                    'method' => 'PATCH',
-                    'route' => ['settings.update', $user->id],
-                    'class' => 'form-horizontal'
-                ]) !!}
+                <form method="POST" action="{{ route('settings.update')}}" class="form-horizontal">
+                {{ csrf_field() }}
                 <div class="form-group">
                     <input type="hidden" name="id" value="{{$user->id}}" class="form-control">
                     <label for="games" class="col-md-4 control-label">Partijen</label>
                     <div class="col-md-6">
-                   
+
                         <select name="games" class="form-control">
                             <option value="0" @if(array_key_exists('games', $settings)) @if($settings['games'] == 0) selected @endif @endif>Toon alle partijen</option>
                             <option value="1" @if(array_key_exists('games', $settings)) @if($settings['games'] == 1) selected @endif @endif>Toon eigen partijen</option>
@@ -136,7 +133,7 @@
                             <option value="4" @if(array_key_exists('notifications', $settings)) @if($settings['notifications'] == 4) selected @endif @endif>Notificaties per SMS (Wordt aan gewerkt) en site</option>
                             <option value="5" @if(array_key_exists('notifications', $settings)) @if($settings['notifications'] == 5) selected @endif @endif>Notifcaties alleen op de site</option>
                         </select>
-                        
+
                     </div>
                 </div>
                 <div class="form-group">
@@ -147,7 +144,7 @@
                             <option value="0" @if(array_key_exists('rss', $settings)) @if($settings['rss'] == 0) selected @endif @endif>Geen RSS</option>
                             <option value="1" @if(array_key_exists('rss', $settings)) @if($settings['rss'] == 1) selected @endif @endif>RSS</option>
                         </select>
-                        
+
                     </div>
                 </div>
                 <div class="form-group">
@@ -177,16 +174,16 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="col-md-6 col-md-offset-4">                    
+                    <div class="col-md-6 col-md-offset-4">
                         <div class="btn-group btn-group-lg mr-2" role="group" aria-label="chooser">
-                            <button name="settings" type="submit"  value="0" class="btn btn-success form-control">Pas aan</button>
+                            <button name="settings" type="submit" value="0" class="btn btn-success form-control">Pas aan</button>
                         </div>
                     </div>
-                </div>                    
-                {!! Form::close() !!}
+                </div>
+                </form>
                 </div>
             </div>
-            
+
         </div>
     </div>
 <div class="modal fade" id="notifications_explain" tabindex="-1" role="dialog" aria-labelledby="notifications_explainTitle" aria-hidden="true" style="padding-right:50% !important">
@@ -207,7 +204,7 @@
 
                                     <ul>
                                     <li>Notificaties per e-mail: Je krijgt een email met de statusupdate.</li>
-                                    <li>Push Notificaties: Je krijgt een melding dat je browser push notificaties wilt tonen. Accepteer dit en je zult de statusupdates als melding vanuit je browser, ongeacht of deze open staat, krijgen. 
+                                    <li>Push Notificaties: Je krijgt een melding dat je browser push notificaties wilt tonen. Accepteer dit en je zult de statusupdates als melding vanuit je browser, ongeacht of deze open staat, krijgen.
                                     <br>Dit werkt niet altijd maar wel in de volgende gevallen:
                                     <ul>
                                     <li>Chrome (niet iOS)</li>

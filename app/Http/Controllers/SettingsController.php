@@ -130,7 +130,6 @@ class SettingsController extends Controller
             'settings' => 'required',
             'id' => 'required'
         ]);
-
         $user = Auth::user();
         if ($user->id != $request->get('id')) {
             return redirect()->back()->with("Error", "Fatale error!");
