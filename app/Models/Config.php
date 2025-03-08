@@ -15,17 +15,17 @@ class Config extends Model
      * @var array
      */
     protected $fillable = [
-        'RoundsBetween_Bye', 'RoundsBetween', 'Club', 'Personal', 'Bye', 'Other', 'Presence', 'Start', 'Step', 'Name', 'Season', 'Admin', 'AbsenceMax', 'announcement', 'SeasonPart', 'maximale_aanmeldtijd',
+        'roundsBetween_Bye', 'roundsBetween', 'club', 'personal', 'bye', 'other', 'presence', 'start', 'step', 'name', 'season', 'admin', 'absencemax', 'announcement', 'seasonpart', 'maximale_aanmeldtijd',
     ];
     public static function RoundsBetween($bye)
     {
         if ($bye == 1) {
-            $value = Config::select('RoundsBetween_Bye')->first();
+            $value = Config::select('roundsBetween_Bye')->first();
 
             // Maybe you want to add more rounds between Bye-games.
             return $value->RoundsBetween_Bye;
         } else {
-            $value = Config::select('RoundsBetween')->first();
+            $value = Config::select('roundsBetween')->first();
 
             return $value->RoundsBetween;
         }
@@ -35,58 +35,58 @@ class Config extends Model
     {
         // Absence club (afwezig club)
         if ($result == "Club") {
-            $value = Config::select('Club')->first();
+            $value = Config::select('club')->first();
 
             return $value->Club;
         }
         // Absence due to personal reasons/sickness/force majeure (0.25)
         elseif ($result == "Personal") {
-            $value = Config::select('Personal')->first();
+            $value = Config::select('personal')->first();
 
             return $value->Personal;
         } elseif ($result == "Bye") {
-            $value = Config::select("Bye")->first();
+            $value = Config::select("bye")->first();
 
             return $value->Bye;
         } elseif ($result == "Presence") {
-            $value = Config::select('Presence')->first();
+            $value = Config::select('presence')->first();
 
             return $value->Presence;
         }
         // Absence with message (afwezig met bericht) (0.3333) --> max 5 times per season part
         else {
-            $value = Config::select('Other')->first();
+            $value = Config::select('other')->first();
 
             return $value->Other;
         }
     }
     public static function SeasonPart()
     {
-        $value = Config::select('SeasonPart')->first();
+        $value = Config::select('seasonpart')->first();
 
         return $value->SeasonPart;
     }
     public static function AbsenceMax()
     {
-        $value = Config::select('AbsenceMax')->first();
+        $value = Config::select('absencemax')->first();
 
         return $value->AbsenceMax;
     }
     public static function InitRanking($key)
     {
         if ($key == "start") {
-            $value = Config::select('Start')->first();
+            $value = Config::select('start')->first();
 
             return $value->Start;
         } else {
-            $value = Config::select('Step')->first();
+            $value = Config::select('step')->first();
 
             return $value->Step;
         }
     }
     public static function CompetitionName()
     {
-        $value = Config::select('Name')->first();
+        $value = Config::select('name')->first();
         if ($value == NULL) {
             return "Keizersysteem voor een club";
         }
@@ -95,7 +95,7 @@ class Config extends Model
 
     public static function CompetitionSeason()
     {
-        $value = Config::select('Season')->first();
+        $value = Config::select('season')->first();
 
         return $value->Season;
     }
