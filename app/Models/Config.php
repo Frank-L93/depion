@@ -21,14 +21,14 @@ class Config extends Model
     public static function RoundsBetween($bye)
     {
         if ($bye == 1) {
-            $value = Config::select('roundsBetween_Bye')->first();
+            $value = Config::select('roundsbetween_bye')->first();
 
             // Maybe you want to add more rounds between Bye-games.
-            return $value->RoundsBetween_Bye;
+            return $value->Roundsbetween_bye;
         } else {
-            $value = Config::select('roundsBetween')->first();
+            $value = Config::select('roundsbetween')->first();
 
-            return $value->RoundsBetween;
+            return $value->Roundsbetween;
         }
     }
 
@@ -38,13 +38,13 @@ class Config extends Model
         if ($result == "Club") {
             $value = Config::select('club')->first();
 
-            return $value->club;
+            return $value->Club;
         }
         // Absence due to personal reasons/sickness/force majeure (0.25)
         elseif ($result == "Personal") {
             $value = Config::select('personal')->first();
 
-            return $value->personal;
+            return $value->Personal;
         } elseif ($result == "Bye") {
             $value = Config::select("bye")->first();
 
@@ -52,13 +52,13 @@ class Config extends Model
         } elseif ($result == "Presence") {
             $value = Config::select('presence')->first();
 
-            return $value->presence;
+            return $value->Presence;
         }
         // Absence with message (afwezig met bericht) (0.3333) --> max 5 times per season part
         else {
             $value = Config::select('other')->first();
 
-            return $value->other;
+            return $value->Other;
         }
     }
     public static function SeasonPart()
@@ -84,11 +84,11 @@ class Config extends Model
         if ($key == "start") {
             $value = Config::select('start')->first();
 
-            return $value->start;
+            return $value->Start;
         } else {
             $value = Config::select('step')->first();
 
-            return $value->step;
+            return $value->Step;
         }
     }
     public static function CompetitionName()
@@ -97,14 +97,14 @@ class Config extends Model
         if ($value == NULL) {
             return "Keizersysteem voor een club";
         }
-        return $value->name;
+        return $value->Name;
     }
 
     public static function CompetitionSeason()
     {
         $value = Config::select('season')->first();
 
-        return $value->season;
+        return $value->Season;
     }
 
     public static function MaxAanmeldTijd()
