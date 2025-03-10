@@ -37,6 +37,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        if(Auth::check()){
         $settings = settings('ranking');
         if($settings == null) {
             $settings = 'small';
@@ -45,5 +46,11 @@ class HandleInertiaRequests extends Middleware
             'user' => Auth::user()->name,
             'settings' => $settings,
         ]);
+    } else {
+        return array_merge(parent::share($request), [
+            'user' => 'Gast',
+            'settings' => 'small',
+        ]);
+    }
     }
 }
