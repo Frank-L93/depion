@@ -38,13 +38,13 @@ class Config extends Model
         if ($result == "Club") {
             $value = Config::select('club')->first();
 
-            return $value->Club;
+            return $value->club;
         }
         // Absence due to personal reasons/sickness/force majeure (0.25)
         elseif ($result == "Personal") {
             $value = Config::select('personal')->first();
 
-            return $value->Personal;
+            return $value->personal;
         } elseif ($result == "Bye") {
             $value = Config::select("bye")->first();
 
@@ -52,13 +52,13 @@ class Config extends Model
         } elseif ($result == "Presence") {
             $value = Config::select('presence')->first();
 
-            return $value->Presence;
+            return $value->presence;
         }
         // Absence with message (afwezig met bericht) (0.3333) --> max 5 times per season part
         else {
             $value = Config::select('other')->first();
 
-            return $value->Other;
+            return $value->other;
         }
     }
     public static function SeasonPart()
@@ -68,7 +68,7 @@ class Config extends Model
         }
         $value = Config::select('seasonpart')->first();
 
-        return $value->SeasonPart;
+        return $value->seasonpart;
     }
     public static function AbsenceMax()
     {
@@ -77,18 +77,18 @@ class Config extends Model
         }
         $value = Config::select('absencemax')->first();
 
-        return $value->AbsenceMax;
+        return $value->absencemax;
     }
     public static function InitRanking($key)
     {
         if ($key == "start") {
             $value = Config::select('start')->first();
 
-            return $value->Start;
+            return $value->start;
         } else {
             $value = Config::select('step')->first();
 
-            return $value->Step;
+            return $value->step;
         }
     }
     public static function CompetitionName()
@@ -97,14 +97,14 @@ class Config extends Model
         if ($value == NULL) {
             return "Keizersysteem voor een club";
         }
-        return $value->Name;
+        return $value->name;
     }
 
     public static function CompetitionSeason()
     {
         $value = Config::select('season')->first();
 
-        return $value->Season;
+        return $value->season;
     }
 
     public static function MaxAanmeldTijd()

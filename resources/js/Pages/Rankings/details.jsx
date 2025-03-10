@@ -1,6 +1,6 @@
 import { router } from "@inertiajs/react";
 export default function RankingModal ({rank, games, SummerScore}) {
-    console.log(games);
+
     const onClose = () => {
         router.get("/rankings");
     }
