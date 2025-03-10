@@ -1,4 +1,4 @@
-window._ = require('lodash');
+window._ = import('lodash');
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -7,10 +7,10 @@ window._ = require('lodash');
  */
 
 try {
-   
-    window.$ = window.jQuery = require('jquery');
 
-    require('bootstrap');
+    window.$ = window.jQuery = import('jquery');
+
+    import('bootstrap');
 } catch (e) {}
 
 /**
@@ -19,7 +19,7 @@ try {
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
-window.axios = require('axios');
+window.axios = import('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
@@ -46,10 +46,10 @@ const NOTIFICATION_TYPES = {
 };
 
 $(document).ready(function() {
-  
+
     // check if there's a logged in user
     if(Laravel.userId) {
-       
+
         $.get('notifications', function (data) {
             addNotifications(data, "#notifications");
         });

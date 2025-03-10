@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
 
 class Config extends Model
 {
@@ -62,12 +63,18 @@ class Config extends Model
     }
     public static function SeasonPart()
     {
+        if(App::isLocal()){
+            return Config::select('SeasonPart')->first()->SeasonPart;
+        }
         $value = Config::select('seasonpart')->first();
 
         return $value->SeasonPart;
     }
     public static function AbsenceMax()
     {
+        if(App::isLocal()){
+            return Config::select('AbsenceMax')->first()->AbsenceMax;
+        }
         $value = Config::select('absencemax')->first();
 
         return $value->AbsenceMax;

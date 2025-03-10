@@ -6,8 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Ranking;
 use App\Models\Game;
+use App\Services\DetailsService;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class RankingsController extends Controller
 {
@@ -18,11 +20,24 @@ class RankingsController extends Controller
      */
     public function index()
     {
-        $ranking = Ranking::orderBy('score', 'desc')->orderBy('value', 'desc')->get();
+        $ranking = Ranking::orderBy('score', 'desc')->orderBy('value', 'desc')->with('user:id,name')->get();
+        $currentRound = DetailsService::CurrentRound();
 
-        return view('rankings.index')->with('ranking', $ranking);
+        return Inertia::render('Rankings/index',['ranking' => $ranking, 'currentRound' => $currentRound]);
     }
 
+    public function calculateSummerScore($userId){
+        $details = new DetailsService();
+        return $details->SummerScore($userId);
+    }
+
+    public function getDetails($userId){
+        $ranking = Ranking::where('user_id', $userId)->with('user:id,name')->first();
+        $details = new DetailsService();
+        $games = $details->Games($userId);
+        $SummerScore = $details->SummerScore($userId);
+        return Inertia::render('Rankings/details',['rank' => $ranking, 'games' => $games, 'SummerScore' => $SummerScore]);
+    }
     public function admin()
     {
 
@@ -39,7 +54,7 @@ class RankingsController extends Controller
         $users = User::all();
         foreach ($users as $user) {
             $ranking_exist = Ranking::where('user_id', $user->id)->get();
-            if ($presence_exist->isEmpty()) {
+            if ($ranking_exist->isEmpty()) {
             }
         }
     }

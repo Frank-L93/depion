@@ -8,6 +8,7 @@
         "php": "^8.2",
         "awobaz/compoships": "^2.2",
         "guzzlehttp/guzzle": "^7.2",
+        "inertiajs/inertia-laravel": "^2.0",
         "laravel-notification-channels/webpush": "*",
         "laravel/framework": "^12",
         "laravel/sanctum": "*",
@@ -15,7 +16,8 @@
         "laravel/ui": "*",
         "spatie/laravel-cookie-consent": "^3.2",
         "spatie/laravel-feed": "^4.2",
-        "spatie/laravel-html": "^3.2"
+        "spatie/laravel-html": "^3.2",
+        "tightenco/ziggy": "^2.5"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",

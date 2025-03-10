@@ -20,7 +20,33 @@ class DetailsService
         if ($currentRound == null) {
             $currentRound = Round::where('processed', '=', 1)->latest('updated_at')->first();
         }
-        $Games = Game::where([['white', '=', $player], ['round_id', '<=', $currentRound->round]])->orWhere([['black', '=', $player], ['round_id', '<=', $currentRound->round]])->get();
+
+        $white_Games = Game::where('white', '=', $player)->where('round_id', '<=', $currentRound->round)->get();
+        $black_Games = Game::where('black', '=', $player)->where('round_id', '<=', $currentRound->round)->get();
+
+        $white_Games->map(function ($item){
+            $item->score = $this->CurrentScore($item->white, $item->round_id, $item->id);
+            return $item;
+        });
+        $white_Games->map(function ($item) {
+            $item->white = $this->PlayerName($item->white);
+            $item->black = $this->PlayerName($item->black);
+            return $item;
+        });
+
+        $black_Games->map(function ($item){
+            $item->score = $this->CurrentScore($item->black, $item->round_id, $item->id);
+            return $item;
+        });
+
+        $black_Games->map(function ($item) {
+            $item->white = $this->PlayerName($item->white);
+            $item->black = $this->PlayerName($item->black);
+            return $item;
+        });
+
+        $Games = $white_Games->merge($black_Games);
+        $Games = $Games->sortByDesc('round_id');
         return $Games;
     }
 
@@ -48,7 +74,7 @@ class DetailsService
         return $round;
     }
 
-    public function CurrentRound()
+    public static function CurrentRound()
     {
 
         $currentRound = Round::where('ranking', '=', 1)->orderBy('updated_at', 'DESC')->first();
@@ -95,6 +121,7 @@ class DetailsService
                     }
                 } else {
                     $absence_max = Config::AbsenceMax();
+
                     $amount_absence = Game::where([['white', '=', $game->white], ['result', '=', 'Afwezigheid'], ['black', '=', 'Other']])->count();
 
                     if ($amount_absence > $absence_max) {
@@ -289,10 +316,11 @@ class DetailsService
 
     public function CurrentScore($player, $selectedRound, $gameID)
     {
-
         // Get the Game;
-        $game = Game::where([['white', '=', $player], ['round_id', '=', $selectedRound], ['id', '=', $gameID]])->orWhere([['black', '=', $player], ['round_id', '=', $selectedRound], ['id', '=', $gameID]])->first();
-
+        $game = Game::find($gameID);
+        if($game->round_id > $selectedRound){
+            return "Niet gespeeld";
+        }
         // Get the current Round to determine if round game round is earlier.
         $round = $this->LastRound();
 
@@ -303,6 +331,7 @@ class DetailsService
         // Check for Absence Game;
 
         if ($game->white == $player && $game->result == "Afwezigheid") {
+
             // Set White Score to 0
             $white_score = 0;
             // Get the ranking for the values.
@@ -322,7 +351,9 @@ class DetailsService
                     $white_score = Config::Scoring("Personal") * $white_ranking->LastValue;
                 }
             } else {
+
                 $absence_max = Config::AbsenceMax();
+
                 // Season parts
                 $season_part = Config::SeasonPart();
                 // filter this for the first X rounds.
@@ -354,7 +385,9 @@ class DetailsService
             $score = $white_score;
             return $score;
         } else {
+
             if (($game->white == $player && $game->result != "Afwezigheid") || ($game->black == $player && $game->result != "Afwezigheid")) {
+
                 if(Str::contains($game->result, 'R')){
                     $result = explode("-", $game->result);
                     $white_result = $result[0];
@@ -506,6 +539,7 @@ class DetailsService
                     return $score;
                 }
             }
+
         }
     }
 }

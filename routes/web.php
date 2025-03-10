@@ -11,6 +11,7 @@ use App\Http\Controllers\RoundsController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\NotificationsController;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,8 @@ Route::controller(ActivationController::class)->group(function () {
 
 Route::resource('presences', PresencesController::class)->middleware('auth');
 Route::resource('rounds', RoundsController::class)->middleware('auth');
+
+Route::get('/rankings/{userId}', [RankingsController::class, 'getDetails'])->middleware('auth');
 Route::resource('rankings', RankingsController::class)->middleware('auth');
 Route::resource('games', GamesController::class)->middleware('auth');
 Route::post('/presences/{id}/edit', [PresencesController::class, 'update'])->name('updatePresence')->middleware('auth');

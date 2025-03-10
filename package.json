@@ -8,16 +8,20 @@
     "devDependencies": {
         "@rollup/plugin-inject": "^5.0.4",
         "axios": "*",
-        "laravel-vite-plugin": "^0.7.5",
-        "vite": "^4.0.0"
+        "laravel-vite-plugin": "^1.2.0",
+        "vite": "^6.0.0"
     },
     "dependencies": {
+        "@inertiajs/react": "^2.0.5",
         "@popperjs/core": "^2.11.8",
+        "@vitejs/plugin-react": "^4.3.4",
         "bootstrap": "^5.3.1",
         "bootstrap-editable": "*",
         "bootstrap-table": "^1.22.1",
         "datatables.net-dt": "^1.13.6",
         "jquery": "^3.7.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
         "sass": "^1.64.2",
         "vite-plugin-ruby": "^3.2.2"
     }
