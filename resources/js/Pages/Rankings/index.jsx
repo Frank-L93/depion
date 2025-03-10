@@ -5,17 +5,6 @@ import React, { useState, useEffect } from 'react';
 
 export default function index({ranking, currentRound}) {
     const props = usePage().props;
-    const [ShowModal, setShowModal] = useState(false);
-    const [SelectedRank, setSelectedRank] = useState(null);
-
-    const handleRowClick = (rank) => {
-        router.get("/rankings/" + rank.user.id );
-    };
-
-    const closeModal = () => {
-        setShowModal(false);
-        setSelectedRank(null);
-    };
 
     return (
         <Layout>
@@ -59,7 +48,7 @@ export default function index({ranking, currentRound}) {
                 <td>{rank.amount}</td>
                 <td>{rank.gamescore}</td>
 		<td>{rank.amount > 0 ? (rank.gamescore / rank.amount * 100).toFixed(2) : (<></>)}</td>
-                <td>{rank.TPR !== null ? ( <span>{rank.TPR.toFixed(0)} </span>) : (<span>0</span>)} </td>
+                <td>{rank.tpr !== null ? ( <span>{rank.tpr.toFixed(0)} </span>) : (<span>0</span>)} </td>
                 </>) : (
                 <></>)}
                                 </tr>
