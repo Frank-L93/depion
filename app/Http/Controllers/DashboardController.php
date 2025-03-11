@@ -44,7 +44,7 @@ class DashboardController extends Controller
     }
     public function RoundDashBoard()
     {
-        $round_data = Round::where('date', '=', date('Y-m-d'))->orWhere('date', '>', date('Y-m-d'))->limit(1)->get();
+        $round_data = Round::where('date', '=', date('Y-m-d'))->orWhere('date', '>', date('Y-m-d'))->sortBy('date')->limit(1)->get();
         if ($round_data->isEmpty()) {
             $round_data = "Geen rondes meer!";
         }
