@@ -13,8 +13,8 @@ export default function RankingModal ({rank, games, SummerScore}) {
                     <div className="modal-header">
                         <h5 className="modal-title" id="rankingModalTitle">{rank.user.name}</h5>
                         <hr />
-                        <p>Totale score: {rank.score}</p>
-                        <p>Score in eerste helft: {SummerScore}</p>
+                        <p>Totale score: {rank.score.toFixed(2)}</p>
+                        <p>Score in eerste helft: {SummerScore.toFixed(2)}</p>
                         <p>Waarde in ronde:  {rank.value} <br /> Waarde voor ronde: {rank.lastvalue}</p>
                         <button type="button" onClick={onClose} className="close" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -35,12 +35,12 @@ export default function RankingModal ({rank, games, SummerScore}) {
                             <tbody>
                             {gamesArray.map((game, index) => (
                              <tr key={game.id}>
-                                    <td>{index}</td>
+                                    <td>{index + 1}</td>
                                     <td>{game.white}</td>
                                     <td>{game.black}</td>
                                     <td>{game.result}</td>
                                     <td>{game.round_id}</td>
-                                    <td>{game.score}</td>
+                                    <td>{game.score.toFixed(2)}</td>
                                 </tr>
                                  ))}
                             </tbody>
