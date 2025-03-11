@@ -31,7 +31,7 @@ class AdminController extends Controller
         $games = Game::all();
         $rounds = Round::all();
         $users = User::all();
-        $round_to_process = Round::where('processed', NULL)->orWhere('processed', 0)->first();
+        $round_to_process = Round::where('processed', NULL)->orWhere('processed', 0)->orderBy('date')->first();
         if ($round_to_process == NULL) {
             $round_to_process = new Round;
             $round_to_process->id = 0;
