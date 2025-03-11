@@ -6,6 +6,7 @@ use App\Models\Settings;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use App\Models\Config;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,14 +38,20 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+       
         if(Auth::check()){
+
         $settings = settings('ranking');
         if($settings == null) {
             $settings = 'small';
         }
+        $configs = Config::all();
+
         return array_merge(parent::share($request), [
             'user' => Auth::user()->name,
+            'auth' => ['user' => Auth::user()],
             'settings' => $settings,
+            'configs' => $configs,
         ]);
     } else {
         return array_merge(parent::share($request), [
@@ -52,5 +59,6 @@ class HandleInertiaRequests extends Middleware
             'settings' => 'small',
         ]);
     }
+
     }
 }

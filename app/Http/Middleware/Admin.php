@@ -21,7 +21,7 @@ class Admin
         if (Auth::check()) {
             $frank = User::find(auth::user()->id)->first();
             $thijs = User::find(39)->first();
-            $admin = Config::select('Admin')->first();
+            $admin = Config::select('admin')->first();
             if(Auth::user()->id == 2 && $frank->name == 'Frank Lambregts'){
 
             }elseif(Auth::user()->id == 39 && $thijs->name == 'Thijs van Tilborg'){

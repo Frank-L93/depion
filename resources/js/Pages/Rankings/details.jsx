@@ -15,7 +15,7 @@ export default function RankingModal ({rank, games, SummerScore}) {
                         <hr />
                         <p>Totale score: {rank.score}</p>
                         <p>Score in eerste helft: {SummerScore}</p>
-                        <p>Waarde in ronde:  {rank.value} <br /> Waarde voor ronde: {rank.LastValue}</p>
+                        <p>Waarde in ronde:  {rank.value} <br /> Waarde voor ronde: {rank.lastvalue}</p>
                         <button type="button" onClick={onClose} className="close" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

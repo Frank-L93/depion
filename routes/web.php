@@ -44,8 +44,8 @@ Route::controller(ActivationController::class)->group(function () {
 Route::resource('presences', PresencesController::class)->middleware('auth');
 Route::resource('rounds', RoundsController::class)->middleware('auth');
 
-Route::get('/rankings/{userId}', [RankingsController::class, 'getDetails'])->middleware('auth');
-Route::resource('rankings', RankingsController::class)->middleware('auth');
+Route::get('/rankings/{userId}', [RankingsController::class, 'getDetails'])->middleware(['auth', 'inn']);
+Route::resource('rankings', RankingsController::class)->middleware(['auth', 'inn']);
 Route::resource('games', GamesController::class)->middleware('auth');
 Route::post('/presences/{id}/edit', [PresencesController::class, 'update'])->name('updatePresence')->middleware('auth');
 
@@ -64,20 +64,20 @@ Route::controller(NotificationsController::class)->group(function(){
 # Admin Group
 Route::controller(AdminController::class)->group(function () {
     Route::get('/Admin', 'admin')->name('Admin')->middleware('auth');
-    Route::get('/Admin/Rounds', 'RoundsIndex');
+    Route::get('/Admin/Rounds', 'adminRounds')->middleware('inn');
     Route::get('/Admin/Rounds/create', 'RoundsCreate');
-    Route::get('/Admin/Presences', 'presences');
+    Route::get('/Admin/Presences', 'adminPresences')->middleware('inn');
     Route::get('/Admin/Presences/create', 'InitPresences');
+    Route::get('/Admin/Rankings', 'adminRankings')->middleware('inn');
     Route::get('/Admin/RankingList', 'RankingList');
     Route::get('/Admin/RankingList/{Round}/calculate', 'InitCalculation');
     Route::get('/Admin/RankingList/create', 'InitRanking');
     Route::get('/Admin/RatingList', 'RatingList');
     Route::get('/Admin/Reset', 'ResetSeason');
     Route::get('/Admin/Match/{Round}', 'FillArrayPlayers');
-    Route::get('/Admin/Games', 'games');
+    Route::get('/Admin/Games', 'adminGames')->name('admin.games')->middleware('inn');
     Route::get('/Admin/{Game}/Games', 'game');
-    Route::get('/Admin/users/list', 'List');
-    Route::get('/Admin/users/list2', 'List2');
+    Route::get('/Admin/Users', 'adminUsers')->middleware('inn');
     Route::get('/Admin/Game/Add/{Round}', 'AddGame');
     Route::get('/Admin/Presence/Add', 'AddPresence');
     Route::get('/Admin/RankingList/add', 'AddRanking');
@@ -91,19 +91,21 @@ Route::controller(AdminController::class)->group(function () {
 
 
 
+
     Route::post('/Admin/LoadRatings', 'loadRatings')->name('import_process');
     Route::post('/Admin/LoadRounds', 'loadRounds')->name('import_process_rounds');
     Route::post('/Admin/Rounds/create', 'RoundStore')->name('RoundStore');
-    Route::post('/Admin/Games/update', 'UpdateGame')->name('UpdateGame');
+    Route::post('/Admin/Games/{game}/update', 'UpdateGame')->name('UpdateGame');
     Route::post('/Admin/Users/update', 'UpdateUser')->name('UpdateUser');
-    Route::post('/Admin/Config', 'Instellingen')->name('config');
+    Route::post('/Admin/Config', 'Instellingen')->name('config')->middleware('inn');
+    Route::get('/Admin/Config', 'adminConfigs')->middleware('inn');
     Route::post('/Admin/Game/create', 'storeGame')->name('storeGame');
     Route::post('/Admin/Presence/create', 'storePresence')->name('storePresence');
     Route::post('/Admin/Ranking/create', 'storeRanking')->name('storeRanking');
     Route::post('/Admin/RankingList/StoreUpdatedRanking', 'StoreUpdatedRanking')->name('StoreUpdatedRanking');
 
     // Administrator-pages (deletes)
-    Route::delete('/Admin/{Presence}/Presences', 'DestroyPresences')->name('destroyPresences');
+    Route::delete('/Admin/{Presence}/Presences', 'DestroyPresences')->name('destroyPresences')->middleware('inn');
     Route::delete('/Admin/{User}/User', 'DestroyUser')->name('destroyUser');
     Route::delete('/Admin/{Game}/Games', 'DestroyGames')->name('destroyGames');
     Route::delete('/Admin/{Round}/Rounds', 'DestroyRounds')->name('destroyRounds');

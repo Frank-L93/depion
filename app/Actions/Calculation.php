@@ -367,13 +367,13 @@ class Calculation
         return $this->UpdateRanking();
     }
 
+
     // TPR
     public function calculateTPR($player)
     {
         $user = Ranking::where('user_id', $player)->first();
         if ($user->amount == 0) {
-            $tpr = 0;
-            return $tpr;
+            return 0;
         }
 
         $divide = $user->gamescore / $user->amount;

@@ -50,6 +50,9 @@ class iOSNotificationsController extends Controller implements Feedable
                 // Match
                 if ($type == 2) {
                     $game = Game::where('white', $user->id)->orWhere('black', $user->id)->latest()->first();
+                    if($game == null){
+                        return;
+                    }
                     $white = User::select('name')->where('id', $game->white)->first();
 
                     if ($game->black == "Bye" || $game->result == "Afwezigheid") {

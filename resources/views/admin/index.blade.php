@@ -62,22 +62,22 @@
         <a class="nav-link active" href="#ratinglist" role="tab" data-toggle="tab">Ratinglijst</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#config" role="tab" data-toggle="tab">Configuratie</a>
+        <a class="nav-link" href="Admin/Config">Configuratie</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#users" role="tab" data-toggle="tab">Gebruikers</a>
+        <a class="nav-link" href="Admin/Users"">Gebruikers</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#presences" role="tab" data-toggle="tab">Aanwezigheden</a>
+        <a class="nav-link" href="Admin/Presences">Aanwezigheden</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#rankings" role="tab" data-toggle="tab">Ranglijst</a>
+        <a class="nav-link" href="Admin/Rankings">Ranglijst</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#rounds" role="tab" data-toggle="tab">Rondes</a>
+        <a class="nav-link" href="Admin/Rounds">Rondes</a>
     </li>
     <li class="nav-item">
-        <a class="nav-link" href="#games" role="tab" data-toggle="tab">Partijen</a>
+        <a class="nav-link" href="Admin/Games">Partijen</a>
     </li>
 
 
@@ -89,116 +89,10 @@
             @include('admin.ratinglist')
         </p>
     </div>
-     <div role="tabpanel" class="tab-pane" id="config">
-        <p>
-            @include('admin.config')
-        </p>
-    </div>
-    <div role="tabpanel" class="tab-pane" id="users">
-        <p>
-            @include('admin.users')
-        </p>
-    </div>
-    <div role="tabpanel" class="tab-pane" id="presences">
 
-        <p>
-            @include('admin.presences')
-        </p>
-    </div>
-    <div role="tabpanel" class="tab-pane" id="rankings">
-        <p>
-            @include('admin.rankings')
-        </p>
-    </div>
-    <div role="tabpanel" class="tab-pane" id="rounds">
-        <p>
-            @include('admin.rounds')
-        </p>
-    </div>
-    <div role="tabpanel" class="tab-pane" id="games">
-        <p>
-            @include('admin.games')
-        </p>
-    </div>
 </div>
 
   <!-- Editable Form Magic-->
   <!-- Used by the adminpages -->
-        <script>
-            $('#presencesTable').DataTable();
 
-            $.fn.editable.defaults.mode = 'inline';
-            $.fn.editable.defaults.params = function (params) {
-                params._token = $("#_token").data("token");
-                return params;
-            };
-            $('.result').editable({
-                type: 'select',
-                name:'result',
-                url:'/Admin/Games/update',
-                source: [
-                            {value: "1-0", text: '1-0'},
-                            {value: "0.5-0.5", text: '0.5-0.5'},
-                            {value: "0-1", text: '0-1'},
-                            {value: "0-1R", text: '0-1R'},
-                            {value: "1-0R", text: '1-0R'},
-                        ]
-            });
-                $('.white').editable({
-                    type: 'select',
-                    name:'white',
-                    url:'/Admin/Games/update',
-                    source: "/Admin/users/list"
-                });
-
-                $('.black').editable({
-                    type: 'select',
-                    name:'black',
-                    url:'/Admin/Games/update',
-                    source: "/Admin/users/list"
-                });
-            $('.email').editable({
-                type: 'email',
-                name: 'email',
-                url:'/Admin/Users/update',
-            });
-            $('.rights').editable({
-                type: 'select',
-                name: 'rights',
-                url:'/Admin/Users/update',
-                source: [
-                            {value: "0", text: 'Gebruiker'},
-                            {value: "1", text: 'Competitieleider'},
-                            {value: "2", text: 'Admin'}
-                        ]
-            });
-            $('.rating').editable({
-                type: 'number',
-                name: 'rating',
-                url:'/Admin/Users/update',
-            });
-            $('.active_user').editable({
-                type: 'select',
-                name: 'active',
-                url:'/Admin/Users/update',
-                  source: [
-                            {value: "0", text: 'Niet Actief'},
-                            {value: "1", text: 'Actief'},
-                        ]
-            });
-             $('.knsb_id').editable({
-                type: 'number',
-                name: 'knsb_id',
-                url:'/Admin/Users/update',
-            });
-             $('.beschikbaar').editable({
-                type: 'select',
-                name: 'beschikbaar',
-                url:'/Admin/Users/update',
-                  source: [
-                            {value: "0", text: 'Standaard Niet Aanwezig'},
-                            {value: "1", text: 'Standaard Aanwezig'},
-                        ]
-            });
-        </script>
 @endsection

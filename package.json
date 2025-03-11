@@ -21,7 +21,9 @@
         "datatables.net-dt": "^1.13.6",
         "jquery": "^3.7.0",
         "react": "^19.0.0",
+        "react-contenteditable": "^3.3.7",
         "react-dom": "^19.0.0",
+        "react-inline-editing": "^1.0.10",
         "sass": "^1.64.2",
         "vite-plugin-ruby": "^3.2.2"
     }

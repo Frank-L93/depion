@@ -12,40 +12,77 @@ use App\Models\Ranking;
 use App\Models\Game;
 use App\Actions\MatchGames;
 use App\Models\Config;
-use App\Models\Settings;
 use App\Actions\Calculation;
-use App\Helpers\TPRHelper;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Http\Controllers\iOSNotificationsController;
 use App\Services\DetailsService;
-use Carbon\Carbon;
-use Ramsey\Uuid\Uuid;
+use Inertia\Inertia;
 
 
 global $k;
 class AdminController extends Controller
 {
 
-    // Index page of our Admin
-    public function admin()
-    {
+    public function adminGames(){
         $games = Game::all();
-        $users = User::all();
-        $presences = Presence::all();
         $rounds = Round::all();
-        $configs = Config::all();
+        $users = User::all();
         $round_to_process = Round::where('processed', NULL)->orWhere('processed', 0)->first();
         if ($round_to_process == NULL) {
             $round_to_process = new Round;
             $round_to_process->id = 0;
         }
-        $ranking = Ranking::orderBy('score', 'desc')->orderBy('value', 'desc')->get();
-        return view('admin.index')->with('rounds', $rounds)->with('presences', $presences)->with('ranking', $ranking)->with('games', $games)->with('users', $users)->with('round_to_process', $round_to_process)->with('configs', $configs);
+        return Inertia::render('Admin/Games', ['games' => $games, 'rounds' => $rounds, 'users' => $users, 'round_to_process' => $round_to_process]);
+    }
+
+    public function adminUsers(){
+        $users = User::all();
+        return Inertia::render('Admin/Users', ['users' => $users]);
+    }
+
+    public function adminRounds(){
+        $rounds = Round::orderBy('id')->get();
+        return Inertia::render('Admin/Rounds', ['rounds' => $rounds]);
+    }
+
+    public function adminPresences(Request $request){
+        $search = $request->input('search');
+        $query = Presence::with('user');
+
+        if ($search) {
+            $query->whereHas('user', function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%');
+            });
+        }
+
+        $presences = $query->paginate(50); // Adjust the number of items per page as needed
+
+        return Inertia::render('Admin/Presences', ['presences' => $presences, 'search' => $search]);
+    }
+
+    public function adminRankings(){
+        $rankings = Ranking::with('user')->orderBy('value', 'desc')->get();
+        return Inertia::render('Admin/Rankings', ['ranking' => $rankings]);
+    }
+
+    public function adminConfigs(){
+        $configs = Config::all();
+        return Inertia::render('Admin/Configs', ['configs' => $configs]);
+    }
+
+    public function adminIndex(){
+        return Inertia::render('Admin/Index');
+    }
+    // Index page of our Admin
+    public function admin()
+    {
+        $configs = Config::all();
+
+        return view('admin.index')->with('configs', $configs);
     }
 
 
@@ -80,6 +117,7 @@ class AdminController extends Controller
 
     public function DestroyPresences($id)
     {
+
         if (Gate::allows('admin', Auth::user())) {
             $presence = Presence::find($id);
             // Check if player has a game in this round
@@ -88,25 +126,25 @@ class AdminController extends Controller
             $games_black = Game::where('round_id', $presence->round)->where('black', $presence->user_id)->get();
             if ($games_white->isEmpty() && $games_black->isEmpty()) {
                 $presence->delete();
-                return redirect('/Admin')->with('success', 'Aanwezigheid verwijderd!');
+                return redirect('/Admin', 303)->with('success', 'Aanwezigheid verwijderd!');
             } elseif ($games_black->isEmpty()) {
                 foreach ($games_white as $game) {
                     if ($game->black == "Bye") {
                         $round = Round::find($game->round_id);
                         if ($round->processed == 1) {
-                            return redirect('/Admin')->with('error', 'Deze aanwezigheid kan niet meer verwijderd worden.');
+                            return redirect('/Admin', 303)->with('error', 'Deze aanwezigheid kan niet meer verwijderd worden.');
                         }
                         $presence->delete();
-                        return redirect('/Admin')->with('success', 'Aanwezigheid verwijderd!');
+                        return redirect('/Admin', 303)->with('success', 'Aanwezigheid verwijderd!');
                     } else {
-                        return redirect('/Admin')->with('error', 'Deze aanwezigheid kan niet meer verwijderd worden');
+                        return redirect('/Admin', 303)->with('error', 'Deze aanwezigheid kan niet meer verwijderd worden');
                     }
                 }
             }
 
-            return redirect('/Admin')->with('error', 'Deze aanwezigheid kan niet meer verwijderd worden');
+            return redirect('/Admin', 303)->with('error', 'Deze aanwezigheid kan niet meer verwijderd worden');
         } else {
-            return redirect('/presences')->with('error', 'Je hebt geen toegang tot administrator-paginas!');
+            return redirect('/presences', 303)->with('error', 'Je hebt geen toegang tot administrator-paginas!');
         }
     }
 
@@ -128,9 +166,9 @@ class AdminController extends Controller
         if (Gate::allows('admin', Auth::user())) {
             $game = Game::find($id);
             $game->delete();
-            return redirect('/Admin')->with('success', 'Partij verwijderd!');
+            return redirect('/Admin', 303)->with('success', 'Partij verwijderd!');
         } else {
-            return redirect('/games')->with('error', 'Je hebt geen toegang tot administrator-paginas!');
+            return redirect('/games', 303)->with('error', 'Je hebt geen toegang tot administrator-paginas!');
         }
     }
 
@@ -237,16 +275,12 @@ class AdminController extends Controller
     public function UpdateGame(request $request)
     {
 
-        $game = Game::find($request->input('pk'));
-        if ($request->input('name') == 'result') {
-            $game->result = $request->input('value');
-        } elseif ($request->input('name') == 'white') {
-            $game->white = $request->input('value');
-        } elseif ($request->input('name') == 'black') {
-            $game->black = $request->input('value');
-        } else {
-        }
-        return $game->save();
+        $game = Game::find($request->input('id'));
+        $game->result = $request->input('result');
+        $game->white = $request->input('white');
+        $game->black = $request->input('black');
+        $game->save();
+        return to_route('admin.games')->with('success', 'Resultaat opgeslagen');
     }
 
     public function AddGame($round)
@@ -287,24 +321,29 @@ class AdminController extends Controller
     // User update functionality of the Admin
     public function UpdateUser(request $request)
     {
+        $content = $request->getContent();
+        $decoded = json_decode($content);
 
-        $user = User::find($request->input('pk'));
-        if ($request->input('name') == 'email') {
-            $user->email = $request->input('value');
-        } elseif ($request->input('name') == 'rights') {
-            $user->rechten = $request->input('value');
-        } elseif ($request->input('name') == 'rating') {
-            $user->rating = $request->input('value');
-        } elseif ($request->input('name') == 'active') {
-            $user->active = $request->input('value');
-        } elseif ($request->input('name') == 'knsb_id') {
-            $user->knsb_id = $request->input('value');
-        } elseif ($request->input('name') == 'beschikbaar') {
-            $user->beschikbaar = $request->input('value');
+        $user = User::find($decoded->id);
+
+        if (isset($decoded->email)) {
+            $user->email = $decoded->email;
+        } elseif (isset($decoded->rechten)){
+            $user->rechten = $decoded->rechten;
+        } elseif (isset($decoded->rating)) {
+            $user->rating = $decoded->rating;
+        } elseif (isset($decoded->active)) {
+            $user->active = $decoded->active;
+        } elseif (isset($decoded->knsb_id)) {
+            $user->knsb_id = $decoded->knsb_id;
+        } elseif (isset($decoded->beschikbaar)) {
+            $user->beschikbaar = $decoded->beschikbaar;
         } else {
-            return redirect('/Admin')->with('error', 'Je wilde niks aanpassen. Wat doe je hier?');
+            return redirect('/Admin/Users')->with('error', 'Je wilde niks aanpassen. Wat doe je hier?');
         }
-        return $user->save();
+        $user->save();
+        $users = User::all()->sortBy('id');
+        return redirect('/Admin/Users')->with(['success' => 'Gebruiker met '.$user->id.' is aangepast', 'users' => $users]);
     }
 
     // Destroy a user
@@ -355,39 +394,37 @@ class AdminController extends Controller
     {
         $users = User::where('beschikbaar', 1)->get();
         $rounds = Round::all();
+        $presences = [];
+
         foreach ($users as $user) {
             foreach ($rounds as $round) {
-                $presence_exist = Presence::where([['user_id', '=', $user->id], ['round', '=', $round->round]])->get();
+                $presence_exist = Presence::where([['user_id', '=', $user->id], ['round', '=', $round->round]])->exists();
 
-                if ($presence_exist->isEmpty()) {
-                    $presence = new Presence;
-                    $presence->user_id = $user->id;
-                    $presence->round = $round->round;
-                    $presence->presence = 1;
-                    $presence->save();
+                if (!$presence_exist) {
+                    $presences[] = [
+                        'user_id' => $user->id,
+                        'round' => $round->round,
+                        'presence' => 1,
+                        'created_at' => now(),
+                        'updated_at' => now()
+                    ];
                 }
             }
         }
 
-        $non_available_users = User::where('beschikbaar', 0)->get();
-        $rounds = Round::all();
-        foreach($non_available_users as $user){
-             //The date to compare
-            $checkDate = date( "Y-m-d H:i:s", strtotime( "today -2 days" ) );
+        if (!empty($presences)) {
+            Presence::insert($presences);
+        }
 
-            if($user->updated_at > $checkDate){
-
-            foreach($rounds as $round){
-                if($round->published == 0){
-                    $presence_exist = Presence::where([['user_id', '=', $user->id], ['round', '=', $round->round]])->first();
-                    if(!$presence_exist == null)
-                    {
-                        $presence_exist->delete();
-                    }
+        $non_available_users = User::where('beschikbaar', 0)->where('updated_at', '>', now()->subDays(2))->get();
+        foreach ($non_available_users as $user) {
+            foreach ($rounds as $round) {
+                if ($round->published == 0) {
+                    Presence::where([['user_id', '=', $user->id], ['round', '=', $round->round]])->delete();
                 }
-             }
             }
         }
+
         return redirect('/Admin')->with('success', 'Aanwezigheden aangepast');
     }
 
@@ -520,25 +557,26 @@ class AdminController extends Controller
     public function Instellingen(Request $request)
     {
         $configs = Config::find(1);
-        $configs->RoundsBetween_Bye = $request->input('RoundsBetween_Bye');
-        $configs->RoundsBetween = $request->input('RoundsBetween');
-        $configs->Name = $request->input('Name');
-        $configs->Season = $request->input('Season');
-        $configs->Club = $request->input('Club');
-        $configs->Personal = $request->input('Personal');
-        $configs->Presence = $request->input('Presence');
-        $configs->Start = $request->input('Start');
-        $configs->Step = $request->input('Step');
-        $configs->Other = $request->input('Other');
-        $configs->Bye = $request->input('Bye');
-        $configs->EndSeason = $request->input('EndSeason');
+        $configs->roundsbetween_bye = $request->input('RoundsBetween_Bye');
+        $configs->roundsbetween = $request->input('RoundsBetween');
+        $configs->name = $request->input('Name');
+        $configs->season = $request->input('Season');
+        $configs->club = $request->input('Club');
+        $configs->personal = $request->input('Personal');
+        $configs->presence = $request->input('Presence');
+        $configs->start = $request->input('Start');
+        $configs->step = $request->input('Step');
+        $configs->other = $request->input('Other');
+        $configs->bye = $request->input('Bye');
+        $configs->endseason = $request->input('EndSeason');
         $configs->announcement = $request->input('announcement');
-        $configs->AbsenceMax = $request->input('AbsenceMax');
-        $configs->SeasonPart = $request->input('SeasonPart');
+        $configs->absencemax = $request->input('AbsenceMax');
+        $configs->seasonpart = $request->input('SeasonPart');
         $configs->maximale_aanmeldtijd = $request->input('maximale_aanmeldtijd');
         //$configs->Admin = $request->input('Admin');
         $configs->save();
-        return redirect('/Admin')->with('success', 'Instellingen aangepast!');
+        $configs = Config::all();
+        return Inertia::render('Admin/Configs')->with(['success'=> 'Instellingen aangepast!', 'configs' => $configs]);
     }
 
     // Process the upload of the Rating List and generate user for player in case of non-existence.

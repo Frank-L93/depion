@@ -16,7 +16,7 @@ class Config extends Model
      * @var array
      */
     protected $fillable = [
-        'roundsBetween_Bye', 'roundsBetween', 'club', 'personal', 'bye', 'other', 'presence', 'start', 'step', 'name', 'season', 'admin', 'absencemax', 'announcement', 'seasonpart', 'maximale_aanmeldtijd',
+        'roundsbetween_bye', 'roundsbetween', 'club', 'personal', 'bye', 'other', 'presence', 'start', 'step', 'name', 'season', 'admin', 'absencemax', 'announcement', 'seasonpart', 'maximale_aanmeldtijd',
     ];
     public static function RoundsBetween($bye)
     {
@@ -24,11 +24,11 @@ class Config extends Model
             $value = Config::select('roundsbetween_bye')->first();
 
             // Maybe you want to add more rounds between Bye-games.
-            return $value->Roundsbetween_bye;
+            return $value->roundsbetween_bye;
         } else {
             $value = Config::select('roundsbetween')->first();
 
-            return $value->Roundsbetween;
+            return $value->roundsbetween;
         }
     }
 
@@ -38,43 +38,39 @@ class Config extends Model
         if ($result == "Club") {
             $value = Config::select('club')->first();
 
-            return $value->Club;
+            return $value->club;
         }
         // Absence due to personal reasons/sickness/force majeure (0.25)
         elseif ($result == "Personal") {
             $value = Config::select('personal')->first();
 
-            return $value->Personal;
+            return $value->personal;
         } elseif ($result == "Bye") {
             $value = Config::select("bye")->first();
 
-            return $value->Bye;
+            return $value->bye;
         } elseif ($result == "Presence") {
             $value = Config::select('presence')->first();
 
-            return $value->Presence;
+            return $value->presence;
         }
         // Absence with message (afwezig met bericht) (0.3333) --> max 5 times per season part
         else {
             $value = Config::select('other')->first();
 
-            return $value->Other;
+            return $value->other;
         }
     }
     public static function SeasonPart()
     {
-        if(App::isLocal()){
-            return Config::select('SeasonPart')->first()->SeasonPart;
-        }
+
         $value = Config::select('seasonpart')->first();
 
         return $value->seasonpart;
     }
     public static function AbsenceMax()
     {
-        if(App::isLocal()){
-            return Config::select('AbsenceMax')->first()->AbsenceMax;
-        }
+
         $value = Config::select('absencemax')->first();
 
         return $value->absencemax;
@@ -84,11 +80,11 @@ class Config extends Model
         if ($key == "start") {
             $value = Config::select('start')->first();
 
-            return $value->Start;
+            return $value->start;
         } else {
             $value = Config::select('step')->first();
 
-            return $value->Step;
+            return $value->step;
         }
     }
     public static function CompetitionName()
@@ -97,14 +93,14 @@ class Config extends Model
         if ($value == NULL) {
             return "Keizersysteem voor een club";
         }
-        return $value->Name;
+        return $value->name;
     }
 
     public static function CompetitionSeason()
     {
         $value = Config::select('season')->first();
 
-        return $value->Season;
+        return $value->season;
     }
 
     public static function MaxAanmeldTijd()
