@@ -108,16 +108,16 @@ class DetailsService
                 // Club
                 if ($game->black == "Club") {
                     if ($game->round_id < $round) {
-                        $white_score = Config::Scoring("Club") * $white_ranking->LastValue2;
+                        $white_score = Config::Scoring("Club") * $white_ranking->lastvalue2;
 
                     } else {
-                        $white_score = Config::Scoring("Club") * $white_ranking->LastValue;
+                        $white_score = Config::Scoring("Club") * $white_ranking->lastvalue;
                     }
                 } elseif ($game->black == "Personal") {
                     if ($game->round_id < $round) {
-                        $white_score = Config::Scoring("Personal") * $white_ranking->LastValue2;
+                        $white_score = Config::Scoring("Personal") * $white_ranking->lastvalue2;
                     } else {
-                        $white_score = Config::Scoring("Personal") * $white_ranking->LastValue;
+                        $white_score = Config::Scoring("Personal") * $white_ranking->lastvalue;
                     }
                 } else {
                     $absence_max = Config::AbsenceMax();
@@ -130,16 +130,16 @@ class DetailsService
                         for ($i = 0; $i < $absence_max; $i++) {
                             if ($game->id == $absentGames[$i]->id) {
                                 if ($game->round_id < $round) {
-                                    $white_score += Config::Scoring("Other") * $white_ranking->LastValue;
+                                    $white_score += Config::Scoring("Other") * $white_ranking->lastvalue;
                                 } else {
-                                    $white_score += Config::Scoring("Other") * $white_ranking->Value;
+                                    $white_score += Config::Scoring("Other") * $white_ranking->value;
                                 }
                             } else {
                             }
                         }
                     } else {
                         if ($game->round_id < $round) {
-                            $white_score += Config::Scoring("Other") * $white_ranking->LastValue;
+                            $white_score += Config::Scoring("Other") * $white_ranking->lastvalue;
 
                         } else {
                             $white_score += Config::Scoring("Other") * $white_ranking->value;
@@ -170,9 +170,9 @@ class DetailsService
 
                         $white_ranking = new Ranking();
 
-                        $white_ranking->LastValue = 0;
+                        $white_ranking->lastvalue = 0;
 
-                        $white_ranking->LastValue2 = 0;
+                        $white_ranking->lastvalue2 = 0;
                     }
                     $black_ranking = Ranking::where('user_id', $game->black)->first();
 
@@ -187,24 +187,24 @@ class DetailsService
                     if ($game->black == "Bye") {
                         if ($game->round_id < $round) {
 
-                            $white_score = Config::Scoring("Bye") * $white_ranking->LastValue2;
+                            $white_score = Config::Scoring("Bye") * $white_ranking->lastvalue2;
                         } else {
-                            $white_score = Config::Scoring("Bye") * $white_ranking->LastValue;
+                            $white_score = Config::Scoring("Bye") * $white_ranking->lastvalue;
                         }
                     } elseif ($white_result == "1") {
                         $black_absence = User::where('id', $game->black)->first();
                         if ($game->round_id < $round) {
 
                             if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 || $game->round_id < 6)) {
-                                $white_score += 1 * $black_ranking->FirstValue;
+                                $white_score += 1 * $black_ranking->firstvalue;
                             } else {
-                                $white_score += 1 * $black_ranking->LastValue2;
+                                $white_score += 1 * $black_ranking->lastvalue2;
                             }
                             //
                         } else {
-                            if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->FirstValue;
+                            if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->firstvalue;
                             } else {
-                                $white_score += 1 * $black_ranking->LastValue2;
+                                $white_score += 1 * $black_ranking->lastvalue2;
                             } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
                         }
                         $black_score += Config::Scoring("Presence");
@@ -212,16 +212,16 @@ class DetailsService
                         $black_absence = User::where('id', $game->black)->first();
                         if ($game->round_id < $round) {
                             if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 || $game->round_id < 6)) {
-                                $white_score += 1 * $black_ranking->FirstValue;
+                                $white_score += 1 * $black_ranking->firstvalue;
                             } else {
-                                $white_score += 1 * $black_ranking->LastValue2;
+                                $white_score += 1 * $black_ranking->lastvalue2;
                             }  //
 
                         } else {
                             if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
-                                $white_score += 1 * $black_ranking->FirstValue;
+                                $white_score += 1 * $black_ranking->firstvalue;
                             } else {
-                                $white_score += 1 * $black_ranking->LastValue;
+                                $white_score += 1 * $black_ranking->lastvalue;
                             } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
                         }
 
@@ -230,28 +230,28 @@ class DetailsService
                         $white_absence = User::where('id', $game->white)->first();
                         if ($game->round_id < $round) {
                             if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 || $game->round_id < 6)) {
-                            $white_score += $white_result * $black_ranking->FirstValue;
+                            $white_score += $white_result * $black_ranking->firstvalue;
                         } else {
-                            $white_score += $white_result * $black_ranking->LastValue2;
+                            $white_score += $white_result * $black_ranking->lastvalue2;
                         }
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 || $game->round_id < 6)) {
-                            $black_score += $black_result * $white_ranking->FirstValue;
+                            $black_score += $black_result * $white_ranking->firstvalue;
                         }
                         else{
-                        $black_score += $black_result * $white_ranking->LastValue2;
+                        $black_score += $black_result * $white_ranking->lastvalue2;
                         }
 
                     } else {
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 )) {
-                            $white_score += $white_result * $black_ranking->FirstValue;
+                            $white_score += $white_result * $black_ranking->firstvalue;
                         } else {
-                            $white_score += $white_result * $black_ranking->LastValue;
+                            $white_score += $white_result * $black_ranking->lastvalue;
                         }
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                            $black_score += $black_result * $white_ranking->FirstValue;
+                            $black_score += $black_result * $white_ranking->firstvalue;
                        }else{
-                        $black_score += $black_result * $white_ranking->LastValue;
+                        $black_score += $black_result * $white_ranking->lastvalue;
                        }
                     }
 
@@ -260,17 +260,17 @@ class DetailsService
                         if ($game->round_id < $round) {
                             if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 || $game->round_id < 6)) {
 
-                                $black_score += 1 * $white_ranking->FirstValue;
+                                $black_score += 1 * $white_ranking->firstvalue;
                             } else {
-                                $black_score += 1 * $white_ranking->LastValue2;
+                                $black_score += 1 * $white_ranking->lastvalue2;
                             }
 
                         } else {
                             if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 )) {
 
-                                $black_score += 1 * $white_ranking->FirstValue;
+                                $black_score += 1 * $white_ranking->firstvalue;
                             } else {
-                                $black_score += 1 * $white_ranking->LastValue;
+                                $black_score += 1 * $white_ranking->lastvalue;
                             }
                         }
 
@@ -280,17 +280,17 @@ class DetailsService
                         if ($game->round_id < $round) {
                             if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 || $game->round_id < 6)) {
 
-                                $black_score += 1 * $white_ranking->FirstValue;
+                                $black_score += 1 * $white_ranking->firstvalue;
                             } else {
-                                $black_score += 1 * $white_ranking->LastValue2;
+                                $black_score += 1 * $white_ranking->lastvalue2;
                             }
 
                         } else {
                             if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                                $black_score += 1 * $white_ranking->FirstValue;
+                                $black_score += 1 * $white_ranking->firstvalue;
                             } else {
-                                $black_score += 1 * $white_ranking->LastValue;
+                                $black_score += 1 * $white_ranking->lastvalue;
                             }
                         }
 
@@ -340,15 +340,15 @@ class DetailsService
             // Club
             if ($game->black == "Club") {
                 if ($game->round_id < $round) {
-                    $white_score = Config::Scoring("Club") * $white_ranking->LastValue2;
+                    $white_score = Config::Scoring("Club") * $white_ranking->lastvalue2;
                 } else {
-                    $white_score = Config::Scoring("Club") * $white_ranking->LastValue;
+                    $white_score = Config::Scoring("Club") * $white_ranking->lastvalue;
                 }
             } elseif ($game->black == "Personal") {
                 if ($game->round_id < $round) {
-                    $white_score = Config::Scoring("Personal") * $white_ranking->LastValue2;
+                    $white_score = Config::Scoring("Personal") * $white_ranking->lastvalue2;
                 } else {
-                    $white_score = Config::Scoring("Personal") * $white_ranking->LastValue;
+                    $white_score = Config::Scoring("Personal") * $white_ranking->lastvalue;
                 }
             } else {
 
@@ -367,18 +367,18 @@ class DetailsService
                     for ($i = 0; $i < $absence_max; $i++) {
                         if ($game->id == $absentGames[$i]->id) {
                             if ($game->round_id < $round) {
-                                $white_score = Config::Scoring("Other") * $white_ranking->LastValue2;
+                                $white_score = Config::Scoring("Other") * $white_ranking->lastvalue2;
                             } else {
-                                $white_score = Config::Scoring("Other") * $white_ranking->LastValue;
+                                $white_score = Config::Scoring("Other") * $white_ranking->lastvalue;
                             }
                         } else {
                         }
                     }
                 } else {
                     if ($game->round_id < $round) {
-                        $white_score = Config::Scoring("Other") * $white_ranking->LastValue2;
+                        $white_score = Config::Scoring("Other") * $white_ranking->lastvalue2;
                     } else {
-                        $white_score = Config::Scoring("Other") * $white_ranking->LastValue;
+                        $white_score = Config::Scoring("Other") * $white_ranking->lastvalue;
                     }
                 }
             }
@@ -420,24 +420,24 @@ class DetailsService
                 // Calculate the new score for white and black for this game or all games?
                 if ($game->black == "Bye") {
                     if ($game->round_id < $round) {
-                        $white_score = Config::Scoring("Bye") * $white_ranking->LastValue2;
+                        $white_score = Config::Scoring("Bye") * $white_ranking->lastvalue2;
                     } else {
-                        $white_score = Config::Scoring("Bye") * $white_ranking->LastValue;
+                        $white_score = Config::Scoring("Bye") * $white_ranking->lastvalue;
                     }
                 } elseif ($white_result == "1") {
                     if ($game->round_id < $round) {
 
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 || $game->round_id < 6)) {
-                            $white_score += 1 * $black_ranking->FirstValue;
+                            $white_score += 1 * $black_ranking->firstvalue;
                         } else {
-                            $white_score += 1 * $black_ranking->LastValue2;
+                            $white_score += 1 * $black_ranking->lastvalue2;
                         }
                         //
 
                     } else {
-                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->FirstValue;
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->firstvalue;
                         } else {
-                            $white_score += 1 * $black_ranking->LastValue;
+                            $white_score += 1 * $black_ranking->lastvalue;
                         } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
                     }
 
@@ -447,16 +447,16 @@ class DetailsService
                     if ($game->round_id < $round) {
 
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 || $game->round_id < 6)) {
-                            $white_score += 1 * $black_ranking->FirstValue;
+                            $white_score += 1 * $black_ranking->firstvalue;
                         } else {
-                            $white_score += 1 * $black_ranking->LastValue2;
+                            $white_score += 1 * $black_ranking->lastvalue2;
                         }
                         //
 
                     } else {
-                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->FirstValue;
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->firstvalue;
                         } else {
-                            $white_score += 1 * $black_ranking->LastValue;
+                            $white_score += 1 * $black_ranking->lastvalue;
                         } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
                     }
 
@@ -465,27 +465,27 @@ class DetailsService
                     if ($game->round_id < $round) {
 
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5 || $game->round_id < 6)) {
-                        $white_score += $white_result * $black_ranking->FirstValue;
+                        $white_score += $white_result * $black_ranking->firstvalue;
                     } else {
-                        $white_score += $white_result * $black_ranking->LastValue2;
+                        $white_score += $white_result * $black_ranking->lastvalue2;
                     }
                     if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 || $game->round_id < 6)) {
-                        $black_score += $black_result * $white_ranking->FirstValue;
+                        $black_score += $black_result * $white_ranking->firstvalue;
                     }
                     else{
-                    $black_score += $black_result * $white_ranking->LastValue2;
+                    $black_score += $black_result * $white_ranking->lastvalue2;
                     }
                 } else {
                     if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
-                        $white_score += $white_result * $black_ranking->FirstValue;
+                        $white_score += $white_result * $black_ranking->firstvalue;
                     } else {
-                        $white_score += $white_result * $black_ranking->LastValue;
+                        $white_score += $white_result * $black_ranking->lastvalue;
                     }
                     if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                        $black_score += $black_result * $white_ranking->FirstValue;
+                        $black_score += $black_result * $white_ranking->firstvalue;
                    }else{
-                    $black_score += $black_result * $white_ranking->LastValue;
+                    $black_score += $black_result * $white_ranking->lastvalue;
                    }
                 }
 
@@ -495,16 +495,16 @@ class DetailsService
                     if ($game->round_id < $round) {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 || $game->round_id < 6)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
-                            $black_score += 1 * $white_ranking->LastValue2;
+                            $black_score += 1 * $white_ranking->lastvalue2;
                         }
                     } else {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 || $game->round_id < 6)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
-                            $black_score += 1 * $white_ranking->LastValue;
+                            $black_score += 1 * $white_ranking->lastvalue;
                         }
                     }
                     $white_score += 5;
@@ -513,17 +513,17 @@ class DetailsService
                     if ($game->round_id < $round) {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5 || $game->round_id < 6)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
-                            $black_score += 1 * $white_ranking->LastValue2;
+                            $black_score += 1 * $white_ranking->lastvalue2;
                         }
                     } elseif ($game->round_id > $round) {
                     } else {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
-                            $black_score += 1 * $white_ranking->LastValue;
+                            $black_score += 1 * $white_ranking->lastvalue;
                         }
                     }
                 } else // No result yet?

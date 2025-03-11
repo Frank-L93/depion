@@ -205,14 +205,14 @@ class AdminController extends Controller
 
                     if ($lowest_value_set ==  Config::InitRanking('start')) {
                         $ranking->value = $lowest_value_set;
-                        $ranking->FirstValue = $lower_value_set;
+                        $ranking->firstvalue = $lower_value_set;
                     } else {
                         $ranking->value = $lowest_value->value - 1;
-                        $ranking->FirstValue = $lowest_value->value - 1;
+                        $ranking->firstvalue = $lowest_value->value - 1;
                     }
                 } else {
                     $ranking->value = $player_closest_by->value;
-                    $ranking->FirstValue = $player_closest_by->value;
+                    $ranking->firstvalue = $player_closest_by->value;
                 }
 
                 $ranking->save();
@@ -540,7 +540,7 @@ class AdminController extends Controller
                 $ranking->user_id = $user["id"];
                 $ranking->score = 0;
                 $ranking->value = $i;
-                $ranking->FirstValue = $i;
+                $ranking->firstvalue = $i;
                 $ranking->save();
                 $i = $i - Config::InitRanking("step");
             }
@@ -854,8 +854,8 @@ class AdminController extends Controller
             $rank_white = Ranking::where('user_id', $game->white)->first();
 
             $rank_white->score = $rank_white->score - $currentScore_white;
-            $rank_white->value = $rank_white->LastValue;
-            $rank_white->LastValue = $rank_white->LastValue2;
+            $rank_white->value = $rank_white->lastvalue;
+            $rank_white->lastvalue = $rank_white->lastvalue2;
             $rank_white->amount = $rank_white->amount - 1;
             $rank_white->round = $rank_white->round - 1;
             if($game->black == "Bye" || $game->black == "Other")
@@ -865,8 +865,8 @@ class AdminController extends Controller
                 $currentScore_black = $b->CurrentScore($game->black, $round->id, $game->id);
                 $rank_black = Ranking::where('user_id', $game->black)->first();
                 $rank_black->score = $rank_black->score - $currentScore_black;
-                $rank_black->value = $rank_black->LastValue;
-                $rank_black->LastValue = $rank_black->LastValue2;
+                $rank_black->value = $rank_black->lastvalue;
+                $rank_black->lastvalue = $rank_black->lastvalue2;
                 $rank_black->amount = $rank_black->amount - 1;
                 $rank_black->round = $rank_white->round - 1;
             }
@@ -929,8 +929,8 @@ class AdminController extends Controller
 
         foreach($toCorrect as $rank){
             $rank->round = $rank->round - 1;
-            $rank->value = $rank->LastValue;
-            $rank->LastValue = $rank->LastValue2;
+            $rank->value = $rank->lastvalue;
+            $rank->lastvalue = $rank->lastvalue2;
             $rank->save();
         }
 
