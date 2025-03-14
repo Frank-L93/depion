@@ -56,7 +56,7 @@ export default function Presences({ presences, search: initialSearch }) {
                                     {presences.data.map((presence) => (
                                         <tr key={presence.id}>
                                             <td>
-                                                <Link href={`/presences/${presence.id}`}>{presence.user.name}</Link>
+                                                <Link href={`/presences/${presence.id}/edit`}>{presence.user.name}</Link>
                                             </td>
                                             <td>{presence.round}</td>
                                             <td><span className={presence.presence === 1 ? 'text-success' : 'text-danger'}>

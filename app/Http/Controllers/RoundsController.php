@@ -16,7 +16,7 @@ class RoundsController extends Controller
      */
     public function index()
     {
-        $rounds = Round::all();
+        $rounds = Round::all()->sortBy('date');
         return view('rounds.index')->with('rounds', $rounds);
     }
 

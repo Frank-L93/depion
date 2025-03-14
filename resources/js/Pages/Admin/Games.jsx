@@ -7,7 +7,6 @@ export default function Games({ rounds, games, users, round_to_process }) {
     const [expandedRound, setExpandedRound] = useState(null);
     const [editingGame, setEditingGame] = useState(null);
     const [formData, setFormData] = useState({});
-
     const handleDelete = (id) => {
         if (confirm('Weet je zeker dat je deze partij wilt verwijderen?')) {
             destroy(route('destroyGames', id));

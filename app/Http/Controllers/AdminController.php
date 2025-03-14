@@ -29,7 +29,7 @@ class AdminController extends Controller
 
     public function adminGames(){
         $games = Game::all();
-        $rounds = Round::all();
+        $rounds = Round::orderBy('date')->get();
         $users = User::all();
         $round_to_process = Round::where('processed', NULL)->orWhere('processed', 0)->orderBy('date')->first();
         if ($round_to_process == NULL) {

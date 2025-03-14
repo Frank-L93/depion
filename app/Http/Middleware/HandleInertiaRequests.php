@@ -38,13 +38,14 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-       
+
         if(Auth::check()){
 
         $settings = settings('ranking');
         if($settings == null) {
             $settings = 'small';
         }
+
         $configs = Config::all();
 
         return array_merge(parent::share($request), [

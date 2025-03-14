@@ -16,7 +16,7 @@ class DetailsService
 {
     public function Games($player)
     {
-        $currentRound = Round::where('processed', '=', NULL)->first();
+        $currentRound = Round::where('processed', '=', NULL)->orderBy('date')->first();
         if ($currentRound == null) {
             $currentRound = Round::where('processed', '=', 1)->latest('updated_at')->first();
         }
