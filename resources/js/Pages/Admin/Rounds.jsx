@@ -1,5 +1,5 @@
 import React from 'react';
-import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { Head, router, Link, useForm, usePage } from '@inertiajs/react';
 import AdminLayout from '@/Layouts/AdminLayout';
 
 export default function Rounds({ rounds }) {
@@ -7,7 +7,7 @@ export default function Rounds({ rounds }) {
 
     const handleDelete = (id) => {
         if (confirm('Weet je zeker dat je deze ronde wilt verwijderen?')) {
-            deltete(route('destroyRounds', id));
+            router.delete(route('destroyRounds', id));
         }
     };
 

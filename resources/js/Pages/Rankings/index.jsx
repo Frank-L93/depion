@@ -9,8 +9,8 @@ export default function index({ranking, currentRound}) {
     return (
         <Layout>
                     <Head title="Ranglijst" />
-                    <div class="card">
-                        <div class="card-header text-center">Ranglijst na ronde {currentRound === "Niet" ? '' : currentRound }</div>
+                    <div className="card">
+                        <div className="card-header text-center">Ranglijst na ronde {currentRound === "Niet" ? '' : currentRound }</div>
                         {currentRound === "Niet" ? (
                 <div className="card-body">
                     Ranglijst nog niet gepubliceerd
@@ -41,14 +41,21 @@ export default function index({ranking, currentRound}) {
                                         </Link>
                                     </td>
                                     <td>{rank.user.name}</td>
-                                    <td>{rank.score.toFixed(2)}</td>
+                                    <td>{rank.score.toLocaleString('nl-NL', {minimumFractionDigits: 0, maximumFractionDigits: 2})}</td>
                                     <td>{rank.value}</td>
 
                                     {props.settings === "1" ? ( <>
                 <td>{rank.amount}</td>
                 <td>{rank.gamescore}</td>
 		<td>{rank.amount > 0 ? (rank.gamescore / rank.amount * 100).toFixed(2) : (<></>)}</td>
-                <td>{rank.tpr !== null ? ( <span>{rank.tpr.toFixed(0)} </span>) : (<span>0</span>)} </td>
+                <td>{rank.tpr !== null ? (
+                                                        rank.tpr.toLocaleString('nl-NL', {
+                                                            minimumFractionDigits: 0,
+                                                            maximumFractionDigits: 2,
+                                                        })
+                                                    ) : (
+                                                        "" // Display an empty string if tpr is null
+                                                    )}</td>
                 </>) : (
                 <></>)}
                                 </tr>

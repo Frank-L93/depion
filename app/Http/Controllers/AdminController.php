@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Http\Controllers\iOSNotificationsController;
 use App\Jobs\ProcessCalculation;
+use App\Jobs\ProcessMatching;
 use App\Services\DetailsService;
 use Inertia\Inertia;
 
@@ -158,9 +159,9 @@ class AdminController extends Controller
                 $game->delete();
             }
             $round->delete();
-            return redirect('/Admin')->with('success', 'Ronde verwijderd en tevens partijen verwijderd uit die ronde!');
+            return redirect('/Admin/Rounds', 303)->with('success', 'Ronde verwijderd en tevens partijen verwijderd uit die ronde!');
         } else {
-            return redirect('/rounds')->with('error', 'Je hebt geen toegang tot administrator-paginas!');
+            return redirect('/rounds', 303)->with('error', 'Je hebt geen toegang tot administrator-paginas!');
         }
     }
 
@@ -259,9 +260,10 @@ class AdminController extends Controller
         }
         usort($playerswithranking, array($this, 'sort_value')); // Sorting on value.
 
-        $matches = new MatchGames;
-        $matches->InitPairing($playerswithranking, $round); // Launch Pairing!
-        return redirect('/Admin')->with('Success', 'Partijen aangemaakt!'); // Return will most likely not be called as in the pairing process, the last return that can be called is the return for the notifications which afterwards redirects to the Admin-page too. But for cases that this does not happen, this return is necessary.
+        ProcessMatching::dispatch($playerswithranking, $round);
+        //$matches = new MatchGames;
+        //$matches->InitPairing($playerswithranking, $round); // Launch Pairing!
+        return redirect('/Admin')->with('Success', 'Partijen worden aangemaakt!'); // Return will most likely not be called as in the pairing process, the last return that can be called is the return for the notifications which afterwards redirects to the Admin-page too. But for cases that this does not happen, this return is necessary.
     }
 
     // Helping function for UpdateGame, returns a json to fill editable list.

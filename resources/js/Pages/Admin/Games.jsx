@@ -93,12 +93,12 @@ export default function Games({ rounds, games, users, round_to_process }) {
                                     Ronde {round.id}
                                 </button>
                                 {round.processed !== 1 && (
-                                    <Link
+                                    <a
                                         href={`/Admin/Match/${round.id}/`}
                                         className="btn btn-sm btn-secondary float-right"
                                     >
                                         Genereer Partijen voor Ronde {round.id}
-                                    </Link>
+                                    </a>
                                 )}
                             </div>
                             {expandedRound === round.id && (

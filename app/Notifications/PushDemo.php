@@ -49,7 +49,15 @@ class PushDemo extends Notification
             $this->Database_Message = "Er zijn nieuwe partijen!";
             $this->Type_Text = "Bekijk alle partijen!";
             $this->Type_Action = "games";
-        } elseif ($this->type == "3") {
+        }
+        elseif ($this->type == "3" && $this->title == "Partijen") {
+            $this->subject = "Update!";
+            $this->Database_Title = "Admin-notificatie";
+            $this->Database_Message = "Partijen zijn ingdeeld!";
+            $this->Type_Text = "De job is klaar en je kunt nu controleren!";
+            $this->Type_Action = "admin";
+        }
+        elseif ($this->type == "3") {
             $this->subject = "Update!";
             $this->Database_Title = "Admin-notificatie";
             $this->Database_Message = "Er vereist een attentie van een Admin";

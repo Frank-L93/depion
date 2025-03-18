@@ -40,7 +40,10 @@ export default function RankingModal ({rank, games, SummerScore}) {
                                     <td>{game.black}</td>
                                     <td>{game.result}</td>
                                     <td>{game.round_id}</td>
-                                    <td>{game.score.toFixed(2)}</td>
+                                    <td>{game.score.toLocaleString('nl-NL', {
+                                                            minimumFractionDigits: 0,
+                                                            maximumFractionDigits: 2,
+                                                        })}</td>
                                 </tr>
                                  ))}
                             </tbody>

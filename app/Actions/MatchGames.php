@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 class MatchGames
 {
 
-    public function InitPairing($players, $round)
+    public function InitPairing($players, $round): bool
     {
 
         $playerstopair = $players;
@@ -39,6 +39,7 @@ class MatchGames
         $non_last_player_to_pair = $players_to_pair_with_rating[$count_players_rated - 2];
 
         Log::info('Non Player to pair: '.$non_last_player_to_pair["player"]);
+        Log::info('Checking if it is ok to pair this way');
         if ($this->CheckIfOkToPairThisWay($non_last_player_to_pair["rating"], $last_player_to_pair["rating"]) == true) {
             Log::info('CheckIfOk: true');
             Log::info('Moving player:'.$players[$count_players_rated - 1]["id"]);
@@ -49,22 +50,25 @@ class MatchGames
 
 
         //Check even or odd amount of players
+        Log::info('Checking if bye is necessary');
         if (count($playerstopair) % 2 == 0) {
             $bye_necessary = 0;
         } else {
             $bye_necessary = 1;
         }
-        $this->MatchGame($playerstopair, $round, $bye_necessary);
+        return $this->MatchGame($playerstopair, $round, $bye_necessary);
     }
     public function CheckIfOkToPairThisWay($b, $a)
     {
         $c = 0;
+        Log::info('Checking if it is ok to pair this way with rating: '.$a." and ".$b);
         $math = rand(0, 6);
         if ($a - $b > 500) {
             $c = ($a / 100 - $b / 100);
         }
 
         if ($math + $c > 10) {
+            Log::info('CheckIfOk: false');
             return false;
         } else {
             return true;
@@ -81,6 +85,7 @@ class MatchGames
     {
         $matches = array();
         $matched = array();
+        Log::info('Starting to match players');
 
         if ($bye_necessary == 1) {
             Bye:
@@ -92,10 +97,12 @@ class MatchGames
             if (count($playerstopair) == 1) {
                 $bye = 0;
             }
+            Log::info('Checking if bye is valid for player: '.$playerstopair[$bye]["id"]);
             if ($this->validBye($playerstopair[$bye], $round) == true) {
                 $this->createGame($playerstopair[$bye]["id"], "Bye", $round);
                 array_push($matched, $playerstopair[$bye]["id"]);
             } else {
+                Log::info('Bye is not valid for player: '.$playerstopair[$bye]["id"]);
                 goto Bye;
             }
         }
@@ -106,6 +113,7 @@ class MatchGames
                 // Player is not yet paired, so find an available opponent:
                 // Preferred opponent is next in $playerstopair, or the most closest one that is a valid opponent.
                 // Valid opponent is a player that is not yet paired and a player who has not played against our player being paired in the last X rounds.
+                Log::info('Player: '.$player_being_paired.' is not yet paired, finding an opponent');
                 // Also the color should be checked (if both are on -2 or +2 they can't play against eachother, if one is on -2 or + 2, and the other is on -1 or +1, it is possible, giving the player with the -2 / +2 the correct color)
                 foreach ($playerstopair as $opponent) {
                     $opponent_being_paired = $opponent["id"];
@@ -114,14 +122,17 @@ class MatchGames
                     } else {
                         // Opponent is not paired yet, and opponent is not or player being paired
                         // Check if Opponent is valid for this Player.
+                        Log::info('Checking if opponent: '.$opponent_being_paired.' is valid for player: '.$player_being_paired);
                         if ($this->validOpponent($player_being_paired, $opponent_being_paired, $round, count($matched), count($playerstopair)) == true) {
                             // if Valid, create Game.
+                            Log::info('Opponent: '.$opponent_being_paired.' is valid for player: '.$player_being_paired);
                             if ($this->createGame($player_being_paired, $opponent_being_paired, $round) == true) {
                                 array_push($matched, $opponent_being_paired); // Add opponent to Matched Players
                                 array_push($matched, $player_being_paired); // Add Player to Matched Players
                                 break;
                             } else {
-                                return redirect('/Admin')->with('Error', 'Fout bij aanmaken van partij!');
+                                Log::error('Error creating Game for:'.$player_being_paired. 'vs'. $opponent_being_paired);
+                                return false;
                             }
                         }
                     }
@@ -131,20 +142,24 @@ class MatchGames
             }
         }
         if (count($matched) == count($playerstopair)) {
+            Log::info('All players are matched');
             // Create notification
 
-            return redirect('/Admin')->with('success', 'Partijen voor ronde ' . $round . ' aangemaakt');
+            return true;
         } else {
-            return redirect('/Admin')->with('error', 'Partijen aangemaakt voor ronde ' . $round . ' maar foutief');
+            Log::error('Error, players not matched correctly for round:'.$round);
+            return false;
         }
     }
 
     public function validBye($player_one, $round)
     {
+        Log::info('Checking if bye is valid for player: '.$player_one["id"].' in round: '.$round);
         $round_minimum = $round - Config::RoundsBetween(1);
         if ($round_minimum < 0) {
             $round_minimum = 1;
         }
+        Log::info('Checking if player: '.$player_one["id"].' has had a bye in the last '.Config::RoundsBetween(1).' rounds');
         $game_exist = Game::where([['white', '=', $player_one], ['black', '=', 'Bye']])->whereBetween('round_id', [$round_minimum, $round])->get();
         if (($game_exist->isNotEmpty())) {
             return false;
@@ -154,7 +169,7 @@ class MatchGames
     }
     public function validOpponent($player_one, $player_two, $round, $amount_matched, $amount_to_match)
     {
-        Log::info('We are trying to pair to: '.$player_one." against ".$player_two." with the following settings: ".$amount_matched."&".$amount_to_match);
+        Log::info('We are trying to pair: '.$player_one." against ".$player_two." with the following settings: ".$amount_matched."&".$amount_to_match);
         if ($amount_to_match - $amount_matched < 3) {
             return true;
         }
@@ -162,11 +177,13 @@ class MatchGames
         // Both players have -2 or +2
         $color_value = Ranking::where('user_id', $player_one)->first();
         $color = $color_value->color;
+        Log::info('Color value for player: '.$player_one.' is: '.$color);
 
         $color_value_black = Ranking::where('user_id', $player_two)->first();
         $color_black = $color_value_black->color;
+        Log::info('Color value for player: '.$player_two.' is: '.$color_black);
         if (($color == "-2" && $color_black == "-2") || ($color == "2" && $color_black == "2")) {
-            return false;
+            return false; // Both players have -2 or +2
         }
         // Not valid when:
         // Players have played against eachother in last X rounds.
@@ -175,6 +192,7 @@ class MatchGames
         if ($round_minimum < 0) {
             $round_minimum = 1;
         }
+        Log::info('Checking if players: '.$player_one.' and '.$player_two.' have played against eachother in the last '.Config::RoundsBetween(2).' rounds');
         $game_exist = Game::where([['white', '=', $player_one], ['black', '=', $player_two]])->whereBetween('round_id', [$round_minimum, $round])->get();
         $game_two_exist = Game::where([['white', '=', $player_two], ['black', '=', $player_one]])->whereBetween('round_id', [$round_minimum, $round])->get();
         if (($game_exist->isNotEmpty()) || ($game_two_exist->isNotEmpty())) {
@@ -188,6 +206,7 @@ class MatchGames
         // returns 10
         // The current paired round is our round variable
         // If the round variable <= 10 we are in the first part of the season
+        Log::info('Checking if players: '.$player_one.' and '.$player_two.' have played against eachother in the current season part');
         // Else we are in the second part of the season
         if ($round <= $season_part) {
             // Check for games in the first part of the season
@@ -215,6 +234,7 @@ class MatchGames
     }
     public function createGame($player_one, $player_two, $round)
     {
+        Log::info('Creating game for: '.$player_one.' against '.$player_two.' in round: '.$round);
         // Check color preference.
         // if Player_One has -2 he needs white
         // if Player_One has +2 he needs black
@@ -222,6 +242,7 @@ class MatchGames
         // if Player_Two has -2 he needs white
         // if Player_Two has +2 he needs black
         // if -1 +1, opposite colors
+        Log::info('Checking color preference for: '.$player_one.' against '.$player_two);
         if ($player_two == "Bye") {
             $game = new Game;
             $game->white = $player_one;
@@ -234,7 +255,6 @@ class MatchGames
         $color_value = Ranking::where('user_id', $player_one)->first();
         $color = $color_value->color;
         Log::info('We are trying to pair to: '.$player_one." against ".$player_two);
-
 
         $color_value_black = Ranking::where('user_id', $player_two)->first();
         $color_black = $color_value_black->color;
@@ -266,6 +286,7 @@ class MatchGames
                 $black = $player_one;
             }
         }
+        Log::info('Color preference: '.$white.' is white and '.$black.' is black');
 
 
         $game = new Game;
@@ -276,12 +297,15 @@ class MatchGames
         $game->save();
 
         // Update ranking of player
+        Log::info('Updating ranking of player: '.$white);
         $white_ranking = Ranking::where('user_id', $white)->first();
         $white_ranking->color = $white_ranking->color + 1;
         $white_ranking->save();
+        Log::info('Updating ranking of player: '.$black);
         $black_ranking = Ranking::where('user_id', $black)->first();
         $black_ranking->color = $black_ranking->color - 1;
         $black_ranking->save();
+        Log::info('Game created for: '.$white.' against '.$black.' in round: '.$round);
         return true;
     }
 }
