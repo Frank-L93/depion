@@ -152,8 +152,12 @@ class AdminController extends Controller
     {
         if (Gate::allows('admin', Auth::user())) {
             $round = Round::find($id);
+            $games = Game::where('round_id', $round->id)->get();
+            foreach ($games as $game) {
+                $game->delete();
+            }
             $round->delete();
-            return redirect('/Admin')->with('success', 'Rondeverwijderd!');
+            return redirect('/Admin')->with('success', 'Ronde verwijderd en tevens partijen verwijderd uit die ronde!');
         } else {
             return redirect('/rounds')->with('error', 'Je hebt geen toegang tot administrator-paginas!');
         }
