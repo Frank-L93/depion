@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Http\Controllers\iOSNotificationsController;
+use App\Jobs\ProcessCalculation;
 use App\Services\DetailsService;
 use Inertia\Inertia;
 
@@ -510,10 +511,11 @@ class AdminController extends Controller
     // Calculation
     public function InitCalculation($round)
     {
-        $calculation = new Calculation;
-        $calculation->Calculate($round);
+        ProcessCalculation::dispatch($round);
+        //$calculation = new Calculation;
+        //$calculation->Calculate($round);
         // No return necessary, return happens in Class of Calculation. But in case this fails, return to /Admin with a success message.
-        return redirect('/Admin')->with('success', 'Ranglijst is bijgewerkt.');
+        return redirect('/Admin')->with('success', 'Ranglijst wordt bijgewerkt.');
     }
 
     private function sort_rating($a, $b)

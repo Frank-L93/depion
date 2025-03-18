@@ -32,6 +32,7 @@ class Calculation
         // Get all rankings, as we need to work with these.
         $rankings = Ranking::all();
 
+        Log::info('Starting calculation for round: '.$round);
         // Reset score as we do recalculating the score of previous rounds based on value in this round
         // Also reset amount, gamescore & ratop as we loop through all games again. So if we keep it the value it already has, it will duplicate itself!
 
@@ -41,12 +42,14 @@ class Calculation
             $ranking->amount = 0;
             $ranking->gamescore = 0;
             $ranking->ratop = 0;
+            Log::info('Resetting ranking for user: '.$ranking->user_id);
             $ranking->save();
         }
 
         // Get all games.
         $games = Game::where('round_id', '<=', $round)->get();
          // Round 2 // Win of Joshua Round 1 & Afwezig in ronde 2
+         Log::info('Found '.count($games).' games to process.');
         foreach ($games as $game) {
 
             // decide the result for white and for black
@@ -62,7 +65,7 @@ class Calculation
                     $white_ranking->value = $lowest_value->value - 1;
                     $white_ranking->firstvalue = $white_ranking->value;
                     $white_ranking->save();
-
+                    Log::info('Created a new ranking for user: '.$white_ranking->user_id.' with value: '.$white_ranking->value);
                     // Set the new created Ranking as white_ranking again.
                     $white_ranking = Ranking::where('user_id', $game->white)->first();
                 }
@@ -77,6 +80,7 @@ class Calculation
                 } else {
                     $white_score = $white_ranking->score;
                 }
+                Log::info('Processing absence for user: '.$game->white.' in round: '.$game->round_id.' with reason: '.$game->black);
                 // We have multiple options for the Afwezigheid-results --> Black = Club, Black = Other or Black = Personal
                 if ($game->black == "Club") {
 
@@ -123,6 +127,7 @@ class Calculation
                 }
 
                 $white_ranking->score = $white_score;
+                Log::info('Updated score for user: '.$game->white.' to: '.$white_score);
                 $white_ranking->save();
             } // Result is not Afwezigheid.
             else {
@@ -151,6 +156,7 @@ class Calculation
                     $white_ranking->value = $lowest_value->value - 1;
                     $white_ranking->firstvalue = $white_ranking->value;
                     $white_ranking->save();
+                    Log::info('Created a new ranking for user: '.$white_ranking->user_id.' with value: '.$white_ranking->value);
 
                     // Set the new created Ranking as white_ranking again.
                     $white_ranking = Ranking::where('user_id', $game->white)->first();
@@ -181,6 +187,7 @@ class Calculation
                         $black_ranking->value = $lowest_value->value - 1;
                         $black_ranking->firstvalue = $black_ranking->value;
                         $black_ranking->save();
+                        Log::info('Created a new ranking for user: '.$black_ranking->user_id.' with value: '.$black_ranking->value);
 
                         // Set the new created Ranking as white_ranking again.
                         $black_ranking = Ranking::where('user_id', $game->black)->first();
@@ -197,6 +204,7 @@ class Calculation
                     }
                 }
 
+                Log::info('Processing game: '.$game->white.' vs '.$game->black.' in round: '.$game->round_id.' with result: '.$game->result);
 
                 // Calculate the new score for white and black for this game or all games?
                 if ($game->black == "Bye") {
@@ -225,6 +233,7 @@ class Calculation
                     $white_ranking->amount = $white_ranking->amount + 1;
                     $black_ranking->amount = $black_ranking->amount + 1;
                     $white_ranking->gamescore = $white_ranking->gamescore + 1;
+                    Log::info('Updated gamescore for user: '.$game->white.' to: '.$white_ranking->gamescore);
 
                     $black_score += Config::Scoring("Presence");
                 } elseif ($white_result == "1R") {
@@ -246,6 +255,7 @@ class Calculation
                     $white_ranking->amount = $white_ranking->amount + 1;
 
                     $white_ranking->gamescore = $white_ranking->gamescore + 1;
+                    Log::info('Updated gamescore for user: '.$game->white.' to: '.$white_ranking->gamescore);
                 } elseif ($white_result == 0.5) {   //69.05 += 0.5 * 69 = 69.05 + 34.5 = 103.60
                     if ($game->round_id < $round) {
                             if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
@@ -277,6 +287,8 @@ class Calculation
                     $black_ranking->amount = $black_ranking->amount + 1;
                     $white_ranking->gamescore = $white_ranking->gamescore + 0.5;
                     $black_ranking->gamescore = $black_ranking->gamescore + 0.5;
+                    Log::info('Updated gamescore for user: '.$game->white.' to: '.$white_ranking->gamescore);
+                    Log::info('Updated gamescore for user: '.$game->black.' to: '.$black_ranking->gamescore);
                 } elseif ($black_result == "1") {
                     if ($game->round_id < $round) {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
@@ -297,6 +309,7 @@ class Calculation
                     $white_ranking->amount = $white_ranking->amount + 1;
                     $black_ranking->amount = $black_ranking->amount + 1;
                     $black_ranking->gamescore = $black_ranking->gamescore + 1;
+                    Log::info('Updated gamescore for user: '.$game->black.' to: '.$black_ranking->gamescore);
 
                     $white_score += Config::Scoring("Presence");
                 } elseif ($black_result == "1R") {
@@ -319,11 +332,13 @@ class Calculation
 
                     $black_ranking->amount = $black_ranking->amount + 1;
                     $black_ranking->gamescore = $black_ranking->gamescore + 1;
+                    Log::info('Updated gamescore for user: '.$game->black.' to: '.$black_ranking->gamescore);
 
                 } else // No result yet?
                 {
                     continue;
                 }
+                Log::info('Updated score for user: '.$game->white.' to: '.$white_score);
 
                 $white_ranking->score = $white_score;
                 $white_ranking->save();
@@ -364,6 +379,7 @@ class Calculation
         $round_processed = Round::find($round);
         $round_processed->processed = 1;
         $round_processed->save();
+        Log::info('Finished calculation for round: '.$round);
         return $this->UpdateRanking();
     }
 
@@ -394,18 +410,18 @@ class Calculation
     }
 
     // Update the ranking as now the scores are processed.
-    public function UpdateRanking()
+    public function UpdateRanking(): void
     {
         $Ranking = Ranking::orderBy('score', 'desc')->get();
+        Log::info('Updating ranking values.');
         $i = Config::InitRanking("start");
         foreach ($Ranking as $rank) {
             $rank->lastvalue2 = $rank->lastvalue;
             $rank->lastvalue = $rank->value;
             $rank->value = $i;
             $rank->save();
+            Log::info('Updated ranking value for user: '.$rank->user_id.' to: '.$rank->value);
             $i = $i - Config::InitRanking("step");
         }
-
-        return redirect('/Admin')->with('success', 'Stand is bijgewerkt, controleer hem en publiceer hem');
     }
 }
