@@ -7,7 +7,7 @@ export default function Rounds({ rounds }) {
 
     const handleDelete = (id) => {
         if (confirm('Weet je zeker dat je deze ronde wilt verwijderen?')) {
-            destroy(route('destroyRounds', id));
+            deltete(route('destroyRounds', id));
         }
     };
 

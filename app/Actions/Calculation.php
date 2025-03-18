@@ -17,7 +17,7 @@ class Calculation
     /* The Calculcation Class has a couple of functions:
     ** Calculate, to initiate the calculation of new scores
     ** $rankings, $round, $games, $configs
-    ** TPR Calculation (which will be helped by the TPR-Helper)
+    ** tpr Calculation (which will be helped by the tpr-Helper)
     ** Updating, which updates the RankingList after the scores have been calculated.
     */
 
@@ -60,7 +60,7 @@ class Calculation
                     $white_ranking->score = 0;
                     $lowest_value = Ranking::select('value')->orderBy('value', 'asc')->limit(1)->first();
                     $white_ranking->value = $lowest_value->value - 1;
-                    $white_ranking->FirstValue = $white_ranking->value;
+                    $white_ranking->firstvalue = $white_ranking->value;
                     $white_ranking->save();
 
                     // Set the new created Ranking as white_ranking again.
@@ -71,7 +71,7 @@ class Calculation
                 if ($white_ranking->score == 0) {
 
                     if($white_absence->beschikbaar == 0){
-                        $white_score = $white_ranking->FirstValue;
+                        $white_score = $white_ranking->firstvalue;
                     }else{
                     $white_score = $white_ranking->value;} // 39
                 } else {
@@ -81,7 +81,7 @@ class Calculation
                 if ($game->black == "Club") {
 
                     if ($game->round_id < $round) {
-                        $white_score += Config::Scoring("Club") * $white_ranking->LastValue; //53*2/3
+                        $white_score += Config::Scoring("Club") * $white_ranking->lastvalue; //53*2/3
                     } elseif ($game->round_id > $round) {
                         // Do not consider games that are in future rounds (i.e. games due to absence)
                     } else {
@@ -89,7 +89,7 @@ class Calculation
                     }
                 } elseif ($game->black == "Personal") {
                     if ($game->round_id < $round) {
-                        $white_score += Config::Scoring("Personal") * $white_ranking->LastValue;
+                        $white_score += Config::Scoring("Personal") * $white_ranking->lastvalue;
                     } elseif ($game->round_id > $round) {
                     } else {
                         $white_score += Config::Scoring("Personal") * $white_ranking->value;
@@ -105,7 +105,7 @@ class Calculation
                         for ($i = 0; $i < $absence_max; $i++) {
                             if ($game->id == $absentGames[$i]->id) {
                                 if ($game->round_id < $round) {
-                                    $white_score += Config::Scoring("Other") * $white_ranking->LastValue;
+                                    $white_score += Config::Scoring("Other") * $white_ranking->lastvalue;
                                 } else {
                                     $white_score += Config::Scoring("Other") * $white_ranking->Value;
                                 }
@@ -114,7 +114,7 @@ class Calculation
                         }
                     } else {
                         if ($game->round_id < $round) {
-                            $white_score += Config::Scoring("Other") * $white_ranking->LastValue;
+                            $white_score += Config::Scoring("Other") * $white_ranking->lastvalue;
                         } elseif ($game->round_id > $round) {
                         } else {
                             $white_score += Config::Scoring("Other") * $white_ranking->value;
@@ -149,7 +149,7 @@ class Calculation
                     $white_ranking->score = 0;
                     $lowest_value = Ranking::select('value')->orderBy('value', 'asc')->limit(1)->first();
                     $white_ranking->value = $lowest_value->value - 1;
-                    $white_ranking->FirstValue = $white_ranking->value;
+                    $white_ranking->firstvalue = $white_ranking->value;
                     $white_ranking->save();
 
                     // Set the new created Ranking as white_ranking again.
@@ -161,7 +161,7 @@ class Calculation
                 if ($white_ranking->score == 0) {
 
                     if($white_absence->beschikbaar == 0){
-                        $white_score = $white_ranking->FirstValue;
+                        $white_score = $white_ranking->firstvalue;
                     }else{
                     $white_score = $white_ranking->value;} // 39
                 } else {
@@ -179,7 +179,7 @@ class Calculation
                         $black_ranking->score = 0;
                         $lowest_value = Ranking::select('value')->orderBy('value', 'asc')->limit(1)->first();
                         $black_ranking->value = $lowest_value->value - 1;
-                        $black_ranking->FirstValue = $black_ranking->value;
+                        $black_ranking->firstvalue = $black_ranking->value;
                         $black_ranking->save();
 
                         // Set the new created Ranking as white_ranking again.
@@ -188,7 +188,7 @@ class Calculation
                     $black_rating = User::where('id', $game->black)->first();
                     if ($black_ranking->score == 0) {
                         if($black_absence->beschikbaar == 0){
-                            $black_score = $black_ranking->FirstValue;
+                            $black_score = $black_ranking->firstvalue;
                         }else{
                         $black_score = $black_ranking->value;
                         }
@@ -201,7 +201,7 @@ class Calculation
                 // Calculate the new score for white and black for this game or all games?
                 if ($game->black == "Bye") {
                     if ($game->round_id < $round) {
-                        $white_score += Config::Scoring("Bye") * $white_ranking->LastValue;
+                        $white_score += Config::Scoring("Bye") * $white_ranking->lastvalue;
                     } elseif ($game->round_id > $round) {
                     } else {
                         $white_score += Config::Scoring("Bye") * $white_ranking->value;
@@ -210,14 +210,14 @@ class Calculation
                     if ($game->round_id < $round) {
 
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
-                            $white_score += 1 * $black_ranking->FirstValue;
+                            $white_score += 1 * $black_ranking->firstvalue;
                         } else {
-                            $white_score += 1 * $black_ranking->LastValue;
+                            $white_score += 1 * $black_ranking->lastvalue;
                         }
                         //
                     } elseif ($game->round_id > $round) {
                     } else {
-                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->FirstValue;
+                        if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {    $white_score += 1 * $black_ranking->firstvalue;
                         } else {
                             $white_score += 1 * $black_ranking->value;
                         } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
@@ -231,14 +231,14 @@ class Calculation
 
                     if ($game->round_id < $round) {
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
-                            $white_score += 1 * $black_ranking->FirstValue;
+                            $white_score += 1 * $black_ranking->firstvalue;
                         } else {
-                            $white_score += 1 * $black_ranking->LastValue;
+                            $white_score += 1 * $black_ranking->lastvalue;
                         }  //
                     } elseif ($game->round_id > $round) {
                     } else {
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
-                            $white_score += 1 * $black_ranking->FirstValue;
+                            $white_score += 1 * $black_ranking->firstvalue;
                         } else {
                             $white_score += 1 * $black_ranking->value;
                         } //58+60 = 118.05 + 59 = 178.1 + 28.5 = 205.65
@@ -249,26 +249,26 @@ class Calculation
                 } elseif ($white_result == 0.5) {   //69.05 += 0.5 * 69 = 69.05 + 34.5 = 103.60
                     if ($game->round_id < $round) {
                             if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
-                            $white_score += $white_result * $black_ranking->FirstValue;
+                            $white_score += $white_result * $black_ranking->firstvalue;
                         } else {
-                            $white_score += $white_result * $black_ranking->LastValue;
+                            $white_score += $white_result * $black_ranking->lastvalue;
                         }
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
-                            $black_score += $black_result * $white_ranking->FirstValue;
+                            $black_score += $black_result * $white_ranking->firstvalue;
                         }
                         else{
-                        $black_score += $black_result * $white_ranking->LastValue;
+                        $black_score += $black_result * $white_ranking->lastvalue;
                         }
                     } elseif ($game->round_id > $round) {
                     } else {
                         if ($black_absence->beschikbaar == 0 && ($black_ranking->amount == 0 || $black_ranking->amount < 5)) {
-                            $white_score += $white_result * $black_ranking->FirstValue;
+                            $white_score += $white_result * $black_ranking->firstvalue;
                         } else {
                             $white_score += $white_result * $black_ranking->value;
                         }
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                            $black_score += $black_result * $white_ranking->FirstValue;
+                            $black_score += $black_result * $white_ranking->firstvalue;
                        }else{
                         $black_score += $black_result * $white_ranking->value;
                        }
@@ -281,15 +281,15 @@ class Calculation
                     if ($game->round_id < $round) {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
-                            $black_score += 1 * $white_ranking->LastValue;
+                            $black_score += 1 * $white_ranking->lastvalue;
                         }
                     } elseif ($game->round_id > $round) {
                     } else {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
                             $black_score += 1 * $white_ranking->value;
                         }
@@ -303,15 +303,15 @@ class Calculation
                     if ($game->round_id < $round) {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
-                            $black_score += 1 * $white_ranking->LastValue;
+                            $black_score += 1 * $white_ranking->lastvalue;
                         }
                     } elseif ($game->round_id > $round) {
                     } else {
                         if ($white_absence->beschikbaar == 0 && ($white_ranking->amount == 0 || $white_ranking->amount < 5)) {
 
-                            $black_score += 1 * $white_ranking->FirstValue;
+                            $black_score += 1 * $white_ranking->firstvalue;
                         } else {
                             $black_score += 1 * $white_ranking->value;
                         }
@@ -340,7 +340,7 @@ class Calculation
 
                         $white_ranking->save();
                     }
-                    $white_ranking->TPR = $this->calculateTPR($game->white);
+                    $white_ranking->tpr = $this->calculateTPR($game->white);
                     $white_ranking->save();
                     if ($black_result == "1R" or $game->black == "Bye") { // White didn't play
                     } else {
@@ -354,7 +354,7 @@ class Calculation
                             }
                             $black_ranking->save();
                         }
-                        $black_ranking->TPR = $this->calculateTPR($game->black);
+                        $black_ranking->tpr = $this->calculateTPR($game->black);
                         $black_ranking->save();
                     }
                 }
@@ -368,7 +368,7 @@ class Calculation
     }
 
 
-    // TPR
+    // tpr
     public function calculateTPR($player)
     {
         $user = Ranking::where('user_id', $player)->first();
@@ -399,8 +399,8 @@ class Calculation
         $Ranking = Ranking::orderBy('score', 'desc')->get();
         $i = Config::InitRanking("start");
         foreach ($Ranking as $rank) {
-            $rank->LastValue2 = $rank->LastValue;
-            $rank->LastValue = $rank->value;
+            $rank->lastvalue2 = $rank->lastvalue;
+            $rank->lastvalue = $rank->value;
             $rank->value = $i;
             $rank->save();
             $i = $i - Config::InitRanking("step");
