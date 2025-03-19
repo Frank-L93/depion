@@ -463,7 +463,7 @@ class AdminController extends Controller
             if ($presence->presence == 0) {
 
                 if ($request->reason == "Empty") {
-                    return redirect('presences')->with('error', 'Aanwezigheid niet aangepast! Je wilde een afmelding plaatsen, kies dan een reden!');
+                    return redirect('presences', 303)->with('error', 'Aanwezigheid niet aangepast! Je wilde een afmelding plaatsen, kies dan een reden!');
                 }
                 $games_white = Game::where('round_id', $round)->where('white', $user)->get();
                 $games_black = Game::where('round_id', $round)->where('black', $user)->get();
@@ -476,14 +476,14 @@ class AdminController extends Controller
                     $game->black = $request->input('reason');
                     $game->save();
                 } else {
-                    return redirect('presences')->with('error', 'Aanwezigheid niet aangepast! Je hebt al een partij in deze ronde gespeeld!');
+                    return redirect('presences', 303)->with('error', 'Aanwezigheid niet aangepast! Je hebt al een partij in deze ronde gespeeld!');
                 }
             }
 
             $presence->save();
-            return redirect('/Admin')->with('success', 'Aanwezigheid voor ' . $request->player . ' doorgegeven');
+            return redirect('/Admin', 303)->with('success', 'Aanwezigheid voor ' . $request->player . ' doorgegeven');
         }
-        return redirect('/Admin')->with('error', 'Er bestond al een aanwezigheid voor deze speler');
+        return redirect('/Admin', 303)->with('error', 'Er bestond al een aanwezigheid voor deze speler');
     }
 
     public function AddRanking()
