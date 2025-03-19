@@ -13,8 +13,6 @@ use App\Models\Ranking;
 use App\Models\Game;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-use function PHPUnit\Framework\isEmpty;
-
 class PushDemo extends Notification
 {
     use Queueable;
@@ -90,7 +88,7 @@ class PushDemo extends Notification
             return ['mail'];
         }
 
-        if(!isEmpty($notifiable->settings()->get('notifications')))
+        if(!empty($notifiable->settings()->get('notifications')))
         {
             if ($notifiable->settings()->get('notifications') == 1) {
             return ['mail', 'database'];
