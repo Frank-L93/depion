@@ -813,7 +813,7 @@ class AdminController extends Controller
         $b->newFeedItem('Partijen', 'Partijen voor ronde' . $Round . ' zijn aangemaakt!', 'https://interndepion.nl/games', '2');
         $a = new PushController();
         $a->push('Admin', 'Partijen voor ronde ' . $Round . ' zijn aangemaakt!', 'Partijen', '2');
-        return redirect('/Admin')->with('success', 'Partijen zijn gepubliceerd!');
+        return redirect('/Admin', 303)->with('success', 'Partijen zijn gepubliceerd!');
     }
     public function PublishRanking($Round)
     {
@@ -825,7 +825,7 @@ class AdminController extends Controller
         $b->newFeedItem('Stand', 'De stand is bijgewerkt, bekijk hem nu!', 'https://interndepion.nl/rankings', '1');
         $a = new PushController();
         $a->push('Admin', 'De stand is bijgewerkt, bekijk hem nu!', 'Stand', '1'); // Get results of round
-        return redirect('/Admin')->with('success', 'Stand is gepubliceerd!');
+        return redirect('/Admin', 303)->with('success', 'Stand is gepubliceerd!');
     }
 
     public function EditRanking($ranking){
