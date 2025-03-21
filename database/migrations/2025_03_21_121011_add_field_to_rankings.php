@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('rankings', function (Blueprint $table) {
-           // $table->double('winterscore')->nullable();
+           $table->double('winterscore')->nullable();
             $table->integer('winter_amount')->nullable();
             $table->integer('winter_ratop')->nullable();
             $table->double('winter_gamescore')->default(0);
