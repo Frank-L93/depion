@@ -787,7 +787,7 @@ class AdminController extends Controller
 
             if ($user->amount == 0) {
                 $tpr = 0;
-                $user->TPR = $tpr;
+                $user->tpr = $tpr;
                 $user->save();
             } else {
 
@@ -796,7 +796,7 @@ class AdminController extends Controller
                 $based_on_divide = $calculation->GetValueForTPR($divide);
 
                 $tpr = $average_rating + $based_on_divide;
-                $user->TPR = $tpr;
+                $user->tpr = $tpr;
                 $user->save();
             }
         }

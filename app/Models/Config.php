@@ -109,4 +109,18 @@ class Config extends Model
 
         return $value->maximale_aanmeldtijd;
     }
+
+    public static function Summer()
+    {
+        $value = Config::select('summer')->first();
+        if($value->summer == 1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+
+    }
 }

@@ -1,5 +1,5 @@
 import { router } from "@inertiajs/react";
-export default function RankingModal ({rank, games, SummerScore}) {
+export default function RankingModal ({rank, games}) {
 
     const onClose = () => {
         router.get("/rankings");
@@ -14,7 +14,7 @@ export default function RankingModal ({rank, games, SummerScore}) {
                         <h5 className="modal-title" id="rankingModalTitle">{rank.user.name}</h5>
                         <hr />
                         <p>Totale score: {rank.score}</p>
-                        <p>Score in eerste helft: {SummerScore.toFixed(2)}</p>
+                        <p>Score in eerste helft: {rank.winterscore}</p>
                         <p>Waarde in ronde:  {rank.value} <br /> Waarde voor ronde: {rank.lastvalue}</p>
                         <button type="button" onClick={onClose} className="close" aria-label="Close">
                             <span aria-hidden="true">&times;</span>

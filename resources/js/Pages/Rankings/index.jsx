@@ -5,7 +5,11 @@ import React, { useState, useEffect } from 'react';
 
 export default function index({ranking, currentRound}) {
     const props = usePage().props;
-
+    const calculateTwo = (a, b) => {
+        a = a * 1;
+        b = b * 1;
+        return a + b;
+    }
     return (
         <Layout>
                     <Head title="Ranglijst" />
@@ -45,14 +49,11 @@ export default function index({ranking, currentRound}) {
                                     <td>{rank.value}</td>
 
                                     {props.settings === "1" ? ( <>
-                <td>{rank.amount}</td>
-                <td>{rank.gamescore}</td>
-		<td>{rank.amount > 0 ? (rank.gamescore / rank.amount * 100).toFixed(2) : (<></>)}</td>
+                <td>{calculateTwo(rank.amount, rank.winter_amount)}</td>
+                <td>{calculateTwo(rank.gamescore, rank.winter_gamescore)}</td>
+		<td>{rank.amount > 0 || rank.winter_amount > 0 ? ( (calculateTwo(rank.gamescore, rank.winter_gamescore)) / (calculateTwo(rank.amount, rank.winter_amount)) * 100).toFixed(2) : (<></>)}</td>
                 <td>{rank.tpr !== null ? (
-                                                        rank.tpr.toLocaleString('nl-NL', {
-                                                            minimumFractionDigits: 0,
-                                                            maximumFractionDigits: 2,
-                                                        })
+                                                        (rank.tpr * 1).toFixed(0)
                                                     ) : (
                                                         "" // Display an empty string if tpr is null
                                                     )}</td>

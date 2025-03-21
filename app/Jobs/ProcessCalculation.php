@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Actions\Calculation;
+use App\Actions\newCalculation;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -25,7 +25,7 @@ class ProcessCalculation implements ShouldQueue
      */
     public function handle(): void
     {
-        $Calculation = new Calculation();
+        $Calculation = new newCalculation();
         $Calculation->calculate($this->round);
     }
 }

@@ -26,17 +26,12 @@ class RankingsController extends Controller
         return Inertia::render('Rankings/index',['ranking' => $ranking, 'currentRound' => $currentRound]);
     }
 
-    public function calculateSummerScore($userId){
-        $details = new DetailsService();
-        return $details->SummerScore($userId);
-    }
-
     public function getDetails($userId){
         $ranking = Ranking::where('user_id', $userId)->with('user:id,name')->first();
         $details = new DetailsService();
         $games = $details->Games($userId);
-        $SummerScore = $details->SummerScore($userId);
-        return Inertia::render('Rankings/details',['rank' => $ranking, 'games' => $games, 'SummerScore' => $SummerScore]);
+
+        return Inertia::render('Rankings/details',['rank' => $ranking, 'games' => $games]);
     }
     public function admin()
     {
