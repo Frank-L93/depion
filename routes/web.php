@@ -86,6 +86,7 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/rounds/{Round}/rankings', 'PublishRanking');
     Route::get('/rounds/{Round}/games', 'PublishGames');
     Route::get('/recalculateTPR', 'RecalculateTPR');
+    Route::get('/recalculateRatop', 'RecalculateRatop');
     Route::get('/Admin/RankingList/reset', 'ResetRanking');
     Route::get('/Admin/RankingList/{Ranking}', 'EditRanking');
 

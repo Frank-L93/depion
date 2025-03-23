@@ -23,6 +23,7 @@ use App\Jobs\ProcessCalculation;
 use App\Jobs\ProcessMatching;
 use App\Services\DetailsService;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Log;
 
 
 global $k;
@@ -777,6 +778,49 @@ class AdminController extends Controller
         }
     }
 
+    public function RecalculateRatop()
+{
+    // Reset ratop for all rankings
+    $rankings = Ranking::all();
+    foreach ($rankings as $ranking) {
+        $ranking->ratop = 0;
+        $ranking->save();
+    }
+
+    // Iterate through all games to calculate ratop
+    $games = Game::all();
+    foreach ($games as $game) {
+        // Update ratop for the white player
+        if ($game->black !== "Bye" && $game->black !== "Other") {
+            $opponent = User::find($game->black);
+            if ($opponent) {
+                $opponentRating = $opponent->rating > 0 ? $opponent->rating : 1000; // Default to 1000 if no rating is set
+                $whiteRanking = Ranking::where('user_id', $game->white)->first();
+                if ($whiteRanking) {
+                    $whiteRanking->ratop += $opponentRating;
+                    $whiteRanking->save();
+                }
+            }
+        }
+
+        // Update ratop for the black player
+        if ($game->black !== "Bye" && $game->black !== "Other") {
+            $opponent = User::find($game->white);
+            if ($opponent) {
+                $opponentRating = $opponent->rating > 0 ? $opponent->rating : 1000; // Default to 1000 if no rating is set
+                $blackRanking = Ranking::where('user_id', $game->black)->first();
+                if ($blackRanking) {
+                    $blackRanking->ratop += $opponentRating;
+                    $blackRanking->save();
+                }
+            }
+        }
+    }
+
+    Log::info("Recalculated ratop for all players.");
+    return redirect('/Admin')->with('success', 'Ratop values recalculated for all players.');
+}
+
     public function RecalculateTPR()
     {
 
@@ -791,8 +835,8 @@ class AdminController extends Controller
                 $user->save();
             } else {
 
-                $divide = $user->gamescore / $user->amount;
-                $average_rating = $user->ratop / $user->amount;
+                $divide = ($user->gamescore + $user->winter_gamescore) / ($user->amount + $user->winter_amount);
+                $average_rating = ($user->ratop + $user->winter_ratop) / ($user->amount + $user->winter_amount);
                 $based_on_divide = $calculation->GetValueForTPR($divide);
 
                 $tpr = $average_rating + $based_on_divide;

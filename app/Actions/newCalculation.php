@@ -134,6 +134,9 @@ class newCalculation
         } else {
             $whiteScore += $this->calculateGameScore($whiteResult, $whiteRanking, $blackRanking, $round);
             $blackScore += $this->calculateGameScore($blackResult, $blackRanking, $whiteRanking, $round);
+
+            $this->updateRatop($whiteRanking, $game->black);
+            $this->updateRatop($blackRanking, $game->white);
         }
 
         $this->updateRankingStats($whiteRanking, $whiteScore, $blackRanking, $blackScore, $whiteResult, $blackResult);
@@ -285,5 +288,18 @@ class newCalculation
     $ranking->save();
 
     Log::info("Awarded Presence score of $presenceScore to user: $playerId");
+}
+
+private function updateRatop($ranking, $opponentId)
+{
+    $opponent = User::find($opponentId);
+
+    if ($opponent) {
+        $opponentRating = $opponent->rating > 0 ? $opponent->rating : 1000; // Default to 1000 if no rating is set
+        $ranking->ratop += $opponentRating;
+        $ranking->save();
+
+        Log::info("Updated ratop for user: {$ranking->user_id} by adding opponent rating: $opponentRating");
+    }
 }
 }
