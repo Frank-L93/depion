@@ -829,7 +829,7 @@ class AdminController extends Controller
         foreach ($rankings as $user) {
 
 
-            if ($user->amount == 0) {
+            if (($user->amount + $user->winter_amount) == 0) {
                 $tpr = 0;
                 $user->tpr = $tpr;
                 $user->save();
