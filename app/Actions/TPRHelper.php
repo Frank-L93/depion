@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class TPRHelper extends Model
 {
     // Table Name
-    protected $table = 'TPRHelper';
+    protected $table = 'tprhelper';
 
     protected $fillable = ['p', 'dp'];
     // Timestamps
