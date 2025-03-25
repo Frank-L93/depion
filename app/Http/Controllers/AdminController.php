@@ -12,7 +12,7 @@ use App\Models\Ranking;
 use App\Models\Game;
 use App\Actions\MatchGames;
 use App\Models\Config;
-use App\Actions\Calculation;
+use App\Actions\newCalculation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -824,7 +824,7 @@ class AdminController extends Controller
     public function RecalculateTPR()
     {
 
-        $calculation = new Calculation;
+        $calculation = new newCalculation;
         $rankings = Ranking::all();
         foreach ($rankings as $user) {
 
@@ -966,7 +966,7 @@ class AdminController extends Controller
             {
             }
             else{
-                $a = new Calculation();
+                $a = new newCalculation();
 
                 $rank_white->tpr = $a->calculateTPR($game->white);
                 $rank_white->save();
