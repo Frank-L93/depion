@@ -26,7 +26,7 @@ class Admin
 
             }elseif(Auth::user()->id == 39 && $thijs->name == 'Thijs van Tilborg'){
             }else{
-            if (Auth::user()->id !== $admin->Admin) {
+            if (Auth::user()->id !== $admin->admin) {
                 return redirect('/')->with('error', 'Je bent geen Administrator!');
             }}
             return $next($request);
