@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use DateTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,6 +17,7 @@ class Round extends Model
     protected $fillable = [
         'uuid', 'round', 'date', 'published', 'ranking',
     ];
+
     // Table Name
     protected $table = 'rounds';
 
@@ -29,10 +29,9 @@ class Round extends Model
     {
         return $this->hasMany('App\Models\Presence');
     }
+
     public function games()
     {
         return $this->hasMany('App\Models\Game');
     }
-
-
 }
