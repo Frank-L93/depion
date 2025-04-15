@@ -14,14 +14,16 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton('App\Models\Settings', function () {
             if (auth()->guest()) {
-                $standard_settings = array();
-                $standard_settings = json_encode(["layout" => "app", "language" => "nl"]);
+                $standard_settings = [];
+                $standard_settings = json_encode(['layout' => 'app', 'language' => 'nl']);
+
                 return $standard_settings;
             } else {
                 $user = auth()->user()->id;
                 if (User::find($user)->settings == 0) {
-                    User::find($user)->update(['settings' => ["layout" => "app"]]);
+                    User::find($user)->update(['settings' => ['layout' => 'app']]);
                 }
+
                 return User::find($user)->settings();
             }
         });

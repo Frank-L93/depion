@@ -16,7 +16,7 @@ return [
      *
      */
     'welcome' => [
-        'title'   => 'Welkom',
+        'title' => 'Welkom',
         'message' => 'Dankjewel voor het kiezen voor KeizerPHP. Wanneer je dit ziet moet je nog beginnen aan het installatieproces. Hiervoor gaan we eerst wat vereisten controleren, daarna vragen we om een aantal technische gegevens (zoals de gegevens van de database). Tenslotte zul je een Admin-account aanmaken en de beginwaardes voor de competitie configureren.',
         'next' => 'Controleer vereisten',
     ],
@@ -106,15 +106,15 @@ return [
                     'mail_password_placeholder' => 'Mail Wachtwoord',
                     'mail_encryption_label' => 'Mail Encryptie',
                     'mail_encryption_placeholder' => 'Mail Encryptie',
-                    'mail_from_label'=>'Mail Van Adres',
-                    'mail_from_placeholder'=>'Mail Van Adres',
+                    'mail_from_label' => 'Mail Van Adres',
+                    'mail_from_placeholder' => 'Mail Van Adres',
 
-                    'vapid_help_label'=>'Kopieer de tekens tussen de "" voor zowel de publieke als private sleutel van de site hier beneden.',
-                    'vapid_get_label'=>'Verkrijg je VAPID Sleutels (nodig om Pushnotificaties te verzenden)',
-                    'vapid_public_label'=>'Vapid Publieke Sleutel',
-                    'vapid_public_placeholder'=>'Vapid Publieke Sleutel',
-                    'vapid_private_label'=>'Vapid Private Sleute',
-                    'vapid_private_placeholder'=>'Vapid Private Sleutel',
+                    'vapid_help_label' => 'Kopieer de tekens tussen de "" voor zowel de publieke als private sleutel van de site hier beneden.',
+                    'vapid_get_label' => 'Verkrijg je VAPID Sleutels (nodig om Pushnotificaties te verzenden)',
+                    'vapid_public_label' => 'Vapid Publieke Sleutel',
+                    'vapid_public_placeholder' => 'Vapid Publieke Sleutel',
+                    'vapid_private_label' => 'Vapid Private Sleute',
+                    'vapid_private_placeholder' => 'Vapid Private Sleutel',
                 ],
                 'buttons' => [
                     'setup_database' => 'Setup Database',
@@ -122,7 +122,7 @@ return [
                     'install' => 'Installeer',
                 ],
             ],
-        ],   
+        ],
         'save' => '.env Opslaan',
         'success' => 'Uw .env bestand is opgeslagen.',
         'errors' => 'Het is niet mogelijk om een .env bestand aan te maken, maak a.u.b het bestand zelf aan.',
@@ -140,8 +140,7 @@ return [
         'register' => 'Maak Admin Account',
     ],
 
-    'configs' =>
-    [
+    'configs' => [
         'title' => 'Stap 5 / 5 | Competitie Configuration',
         'competition' => 'Competitienaam',
         'season' => 'Seizoen',
@@ -160,7 +159,7 @@ return [
         'seasonPart' => 'Aantal rondes per seizoenshelft',
         'save' => 'Sla configuratie op',
     ],
-    
+
     'install' => 'Installeer',
 
     /*

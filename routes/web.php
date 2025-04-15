@@ -1,17 +1,16 @@
 <?php
 
 use App\Http\Controllers\ActivationController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\PagesController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\GamesController;
+use App\Http\Controllers\NotificationsController;
+use App\Http\Controllers\PagesController;
 use App\Http\Controllers\PresencesController;
 use App\Http\Controllers\RankingsController;
 use App\Http\Controllers\RoundsController;
 use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\NotificationsController;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,22 +23,21 @@ use Inertia\Inertia;
 |
 */
 
-Route::controller(PagesController::class)->group(function () {
+Route::controller(PagesController::class)->group(function (): void {
     Route::get('/', 'index');
     Route::get('/home', 'index');
     Route::get('/about', 'about');
 });
 Auth::routes();
 
-Route::controller(ActivationController::class)->group(function () {
+Route::controller(ActivationController::class)->group(function (): void {
     Route::get('/password', 'index')->name('activation');
     Route::post('/activation', 'send')->name('sendActivation');
     Route::get('/activation/{activate}/{email}', 'activate');
     Route::post('/activation_manually', 'activate_man')->name('postActivation');
 });
 
-
-# User Group
+// User Group
 
 Route::resource('presences', PresencesController::class)->middleware('auth');
 Route::resource('rounds', RoundsController::class)->middleware('auth');
@@ -49,20 +47,20 @@ Route::resource('rankings', RankingsController::class)->middleware(['auth', 'inn
 Route::resource('games', GamesController::class)->middleware('auth');
 Route::post('/presences/{id}/edit', [PresencesController::class, 'update'])->name('updatePresence')->middleware('auth');
 
-Route::controller(SettingsController::class)->group(function () {
+Route::controller(SettingsController::class)->group(function (): void {
     Route::get('settings', 'index')->middleware('auth');
     Route::post('settings', 'update')->name('settings.update')->middleware('auth');
     Route::post('/changePassword', 'ChangePassword')->name('changePassword')->middleware('auth');
     Route::post('/changeEmail', 'ChangeEmail')->name('changeEmail')->middleware('auth');
 });
-Route::controller(NotificationsController::class)->group(function(){
+Route::controller(NotificationsController::class)->group(function (): void {
     Route::get('notifications', 'read')->name('readNotifications')->middleware('auth');
 });
 
-# End User Group
+// End User Group
 
-# Admin Group
-Route::controller(AdminController::class)->group(function () {
+// Admin Group
+Route::controller(AdminController::class)->group(function (): void {
     Route::get('/Admin', 'admin')->name('Admin')->middleware('auth');
     Route::get('/Admin/Rounds', 'adminRounds')->middleware('inn');
     Route::get('/Admin/Rounds/create', 'RoundsCreate');
@@ -90,9 +88,6 @@ Route::controller(AdminController::class)->group(function () {
     Route::get('/Admin/RankingList/reset', 'ResetRanking');
     Route::get('/Admin/RankingList/{Ranking}', 'EditRanking');
 
-
-
-
     Route::post('/Admin/LoadRatings', 'loadRatings')->name('import_process');
     Route::post('/Admin/LoadRounds', 'loadRounds')->name('import_process_rounds');
     Route::post('/Admin/Rounds/create', 'RoundStore')->name('RoundStore');
@@ -112,11 +107,11 @@ Route::controller(AdminController::class)->group(function () {
     Route::delete('/Admin/{Round}/Rounds', 'DestroyRounds')->name('destroyRounds');
 })->middleware('admin');
 
-# Web-Push #
+// Web-Push #
 Route::post('/push', 'PushController@store');
 Route::get('/push', 'PushController@push')->name('push');
 
-# RSS Feed #
+// RSS Feed #
 Route::get('/feed/{API_Token}', 'iOSNotificationsController@getFeedItems');
 
 Route::get('/sendNotification', 'AdminController@SendNotification')->middleware('admin');

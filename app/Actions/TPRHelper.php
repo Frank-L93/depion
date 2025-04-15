@@ -11,6 +11,7 @@ class TPRHelper extends Model
     protected $table = 'tprhelper';
 
     protected $fillable = ['p', 'dp'];
+
     // Timestamps
     public $timestamps = true;
 }

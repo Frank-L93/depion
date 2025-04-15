@@ -27,9 +27,6 @@ class Settings extends Model
 
     /**
      * Create a new settings instance.
-     *
-     * @param array $settings
-     * @param User  $user
      */
     public function __construct(array $settings, User $user)
     {
@@ -41,7 +38,7 @@ class Settings extends Model
     /**
      * Retrieve the given setting.
      *
-     * @param  string $key
+     * @param  string  $key
      * @return string
      */
     public function get($key)
@@ -53,12 +50,11 @@ class Settings extends Model
     /**
      * Create and persist a new setting.
      *
-     * @param string $key
-     * @param mixed  $value
+     * @param  string  $key
+     * @param  mixed  $value
      */
     public function set($key, $value)
     {
-
 
         $this->settings[$key] = $value;
 
@@ -68,8 +64,8 @@ class Settings extends Model
     /**
      * Determine if the given setting exists.
      *
-     * @param  string $key
-     * @return boolean
+     * @param  string  $key
+     * @return bool
      */
     public function has($key)
     {
@@ -115,9 +111,9 @@ class Settings extends Model
     /**
      * Magic property access for settings.
      *
-     * @param  string $key
+     * @param  string  $key
+     *
      * @throws Exception
-     * @return
      */
     public function __get($key)
     {

@@ -2,10 +2,10 @@
 
 namespace App;
 
+use App\Exceptions\InvalidFeedItem;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
-use App\Exceptions\InvalidFeedItem;
 
 class Feed implements Responsable
 {

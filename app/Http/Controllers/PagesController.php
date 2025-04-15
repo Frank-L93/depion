@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Config;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +12,7 @@ class PagesController extends Controller
     public function index()
     {
         $settings = app('App\Models\Settings');
-        if (!is_object($settings)) {
+        if (! is_object($settings)) {
             $settings_json = json_decode($settings);
             App::setLocale($settings_json->language);
         } else {
@@ -25,11 +24,12 @@ class PagesController extends Controller
 
         config(['app.name' => Config::CompetitionName()]);
 
-        if ((Auth::check()) && (auth()->user()->remember_token == NULL)) {
+        if ((Auth::check()) && (auth()->user()->remember_token == null)) {
             $user = Auth::user();
 
             $user->remember_token = 1;
             $user->save();
+
             return redirect('/settings')->with('success', 'Gelieve eerst je wachtwoord te wijzigen');
         }
         $dashboard = new DashboardController;
@@ -40,7 +40,7 @@ class PagesController extends Controller
         $dashboard_absences = $dashboard->AbsenceDashBoard();
         $users = User::all();
         $announcement = Config::select('announcement')->first();
-        if ($dashboard_rounds == "Geen rondes meer!") {
+        if ($dashboard_rounds == 'Geen rondes meer!') {
             return view('pages.index')->with('rounds', $dashboard_rounds)->with('config', $announcement);
         }
 

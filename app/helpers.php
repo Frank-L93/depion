@@ -3,10 +3,9 @@
 use App\Models\Settings;
 use Illuminate\Support\Facades\Auth;
 
-
 function settings($key = null)
 {
-    if(Auth::guest()) {
+    if (Auth::guest()) {
         return null;
     }
     $currentSettings = Auth::user()->settings;

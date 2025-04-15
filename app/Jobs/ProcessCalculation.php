@@ -11,6 +11,7 @@ class ProcessCalculation implements ShouldQueue
     use Queueable;
 
     protected $round;
+
     /**
      * Create a new job instance.
      */
@@ -25,7 +26,7 @@ class ProcessCalculation implements ShouldQueue
      */
     public function handle(): void
     {
-        $Calculation = new newCalculation();
+        $Calculation = new newCalculation;
         $Calculation->calculate($this->round);
     }
 }

@@ -2,11 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Settings;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
-use Inertia\Middleware;
 use App\Models\Config;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -39,27 +38,27 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
 
-        if(Auth::check()){
+        if (Auth::check()) {
 
-        $settings = settings('ranking');
-        if($settings == null) {
-            $settings = 'small';
+            $settings = settings('ranking');
+            if ($settings == null) {
+                $settings = 'small';
+            }
+
+            $configs = Config::all();
+
+            return array_merge(parent::share($request), [
+                'user' => Auth::user()->name,
+                'auth' => ['user' => Auth::user()],
+                'settings' => $settings,
+                'configs' => $configs,
+            ]);
+        } else {
+            return array_merge(parent::share($request), [
+                'user' => 'Gast',
+                'settings' => 'small',
+            ]);
         }
-
-        $configs = Config::all();
-
-        return array_merge(parent::share($request), [
-            'user' => Auth::user()->name,
-            'auth' => ['user' => Auth::user()],
-            'settings' => $settings,
-            'configs' => $configs,
-        ]);
-    } else {
-        return array_merge(parent::share($request), [
-            'user' => 'Gast',
-            'settings' => 'small',
-        ]);
-    }
 
     }
 }

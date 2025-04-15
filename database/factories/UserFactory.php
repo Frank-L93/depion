@@ -24,7 +24,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'knsb_id' => 8090687,
             'rechten' => 2,
-            'rating' => 1904
+            'rating' => 1904,
         ];
     }
 

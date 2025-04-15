@@ -7,12 +7,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use App\Models\Settings;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
     use \Awobaz\Compoships\Compoships;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -49,7 +48,6 @@ class User extends Authenticatable
      *
      * @return Settings
      */
-
     public function settings()
     {
         return new Settings($this->settings, $this);
@@ -59,6 +57,7 @@ class User extends Authenticatable
     {
         return new Settings($user_to_get->settings, $user_to_get);
     }
+
     public function ranking()
     {
         return $this->belongsTo('App\Models\Ranking');
@@ -76,6 +75,6 @@ class User extends Authenticatable
 
     public function scopeWithSetting($query, $setting, $value = true)
     {
-        return $query->where('settings->' . str_replace('.', '->', $setting), $value);
+        return $query->where('settings->'.str_replace('.', '->', $setting), $value);
     }
 }

@@ -1,8 +1,7 @@
 <?php
 
 return [
-    'about' =>
-    [
+    'about' => [
         'header' => 'Over',
         'body' => 'Een Keizerlijke Competitie, mede mogelijk gemaakt door:<br>
         <ul>
@@ -20,8 +19,7 @@ return [
 
         <small>Versie 1-2020 - Copyright Frank Lambregts</small>',
     ],
-    'index' =>
-    [
+    'index' => [
         'header_Guest' => 'Login',
         'header_User' => 'Menu van ',
         'body_Guest' => 'Login om gebruik te maken van het Menu ',
@@ -37,12 +35,11 @@ return [
         'absent_dashboard' => 'Gemelde afwezigheden',
         'present' => 'Aanwezig',
     ],
-    'main' =>
-    [
+    'main' => [
 
         'Round' => 'Ronde',
         'Game' => 'Partij',
         'round' => 'ronde',
         'game' => 'partij',
-    ]
+    ],
 ];

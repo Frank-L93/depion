@@ -2,12 +2,11 @@
 
 namespace App\Actions;
 
-use App\Models\Ranking;
-use App\Models\Game;
 use App\Models\Config;
-use App\Models\User;
+use App\Models\Game;
+use App\Models\Ranking;
 use App\Models\Round;
-use App\Actions\TPRHelper;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class newCalculation
@@ -18,10 +17,10 @@ class newCalculation
         $firstPart = $this->isFirstSeasonPart($round);
         $seasonBreak = $this->isSeasonBreak();
         $movedToSummer = $this->movedToSummer();
-        if($round == $seasonBreak || ($round > $seasonBreak && $movedToSummer == false)){
+        if ($round == $seasonBreak || ($round > $seasonBreak && $movedToSummer == false)) {
             // Now we need to move the score to the winterscore as well, as we are moving to the second part of the season, so let's create a variable that we can provide to the UpdateRankings function
             $moveToWinterScore = true;
-        }else{
+        } else {
             $moveToWinterScore = false;
         }
 
@@ -32,7 +31,7 @@ class newCalculation
 
         // Process games
         $games = Game::where('round_id', '<=', $round)->get();
-        Log::info("Found " . count($games) . " games to process.");
+        Log::info('Found '.count($games).' games to process.');
 
         foreach ($games as $game) {
             $this->processGame($game, $round);
@@ -47,29 +46,37 @@ class newCalculation
         Log::info("Finished calculation for round: $round");
     }
 
-    private function isFirstSeasonPart($round)
+    private function isFirstSeasonPart($round): bool
     {
         $lastRoundForSeasonBreak = Config::SeasonPart();
+
         return $round <= $lastRoundForSeasonBreak;
     }
 
-    private function resetRankings($round, $firstPart, $moveToWinterScore)
+    private function resetRankings($round, $firstPart, $moveToWinterScore): void
     {
         $rankings = Ranking::all();
 
         foreach ($rankings as $ranking) {
 
-            if($moveToWinterScore){
+            if ($moveToWinterScore) {
                 $ranking->winterscore = $ranking->score;
                 $ranking->winter_amount = $ranking->amount;
                 $ranking->winter_gamescore = $ranking->gamescore;
                 $ranking->winter_ratop = $ranking->ratop;
             }
             $ranking->round = $round;
-            if($firstPart){
+            if ($firstPart) {
                 $ranking->score = 0;
-            }else{
-                $ranking->score = $ranking->winterscore;
+            } else {
+                if($ranking->winterscore != null)
+                {
+                    $ranking->score = $ranking->winterscore;
+                }
+                else{
+                    $ranking->score = 0;
+                }
+
             }
 
             $ranking->amount = 0;
@@ -81,24 +88,24 @@ class newCalculation
         }
     }
 
-    private function processGame($game, $round)
+    private function processGame($game, $round): void
     {
-         // Award Presence score if the player is present and does not have an "Afwezigheid" result
-    // Award Presence score to both players if they are present and do not have an "Afwezigheid" result
-    if ($game->result !== "Afwezigheid") {
-        $this->awardPresenceScore($game->white);
-        if ($game->black !== "Bye" && $game->black !== "Other") {
-            $this->awardPresenceScore($game->black);
+        // Award Presence score if the player is present and does not have an "Afwezigheid" result
+        // Award Presence score to both players if they are present and do not have an "Afwezigheid" result
+        if ($game->result !== 'Afwezigheid') {
+            $this->awardPresenceScore($game->white);
+            if ($game->black !== 'Bye' && $game->black !== 'bye' && $game->black !== 'Other') {
+                $this->awardPresenceScore($game->black);
+            }
         }
-    }
-        if ($game->result === "Afwezigheid") {
+        if ($game->result === 'Afwezigheid') {
             $this->processAbsence($game, $round);
         } else {
             $this->processResult($game, $round);
         }
     }
 
-    private function processAbsence($game, $round)
+    private function processAbsence($game, $round): void
     {
         $whiteRanking = $this->getOrCreateRanking($game->white);
         $whiteScore = $this->calculateInitialScore($whiteRanking, $game->white);
@@ -112,24 +119,23 @@ class newCalculation
         Log::info("Processed absence for user: {$game->white} in round: {$game->round_id} with reason: $absenceType");
     }
 
-    private function processResult($game, $round)
+    private function processResult($game, $round): void
     {
-        $result = explode("-", $game->result);
+        $result = explode('-', $game->result);
         $whiteResult = $result[0];
         $blackResult = $result[1];
 
         $whiteRanking = $this->getOrCreateRanking($game->white);
         $whiteScore = $this->calculateInitialScore($whiteRanking, $game->white);
-        if($game->black === "Bye" || $game->black == "Other"){
-            $blackRanking = "No";
-            $blackScore = "No";
-        }else{
-        $blackRanking = $this->getOrCreateRanking($game->black);
+        if ($game->black === 'Bye' || $game->black === 'bye' || $game->black == 'Other') {
+            $blackRanking = 'No';
+            $blackScore = 'No';
+        } else {
+            $blackRanking = $this->getOrCreateRanking($game->black);
 
-
-        $blackScore = $this->calculateInitialScore($blackRanking, $game->black);
+            $blackScore = $this->calculateInitialScore($blackRanking, $game->black);
         }
-        if ($game->black === "Bye") {
+        if ($game->black === 'Bye' || $game->black === 'bye') {
             $whiteScore += $this->calculateByeScore($game, $whiteRanking, $round);
         } else {
             $whiteScore += $this->calculateGameScore($whiteResult, $whiteRanking, $blackRanking, $round);
@@ -144,50 +150,47 @@ class newCalculation
         Log::info("Processed game: {$game->white} vs {$game->black} in round: {$game->round_id} with result: {$game->result}");
     }
 
-    private function calculateAbsenceScore($game, $ranking, $type, $round)
+    private function calculateAbsenceScore($game, $ranking, $type, $round): float|int
     {
-        if ($type === "Club" || $type === "Personal" || $type === "Other") {
+        if ($type === 'Club' || $type === 'Personal' || $type === 'Other') {
             $scoringFactor = Config::Scoring($type);
+
             return $game->round_id < $round ? $scoringFactor * $ranking->lastvalue : $scoringFactor * $ranking->value;
         }
 
         return 0;
     }
 
-    private function calculateByeScore($game, $ranking, $round)
+    private function calculateByeScore($game, $ranking, $round): float|int
     {
-        $scoringFactor = Config::Scoring("Bye");
+        $scoringFactor = Config::Scoring('Bye');
+
         return $game->round_id < $round ? $scoringFactor * $ranking->lastvalue : $scoringFactor * $ranking->value;
     }
 
-    private function calculateGameScore($result, $ranking, $opponentRanking, $round)
+    private function calculateGameScore($result, $ranking, $opponentRanking, $round): float|int
     {
-        $scoringFactor = $result === "1" ? 1 : ($result === "0.5" ? 0.5 : 0);
+        $scoringFactor = $result === '1' ? 1 : ($result === '0.5' ? 0.5 : 0);
         $opponentValue = $opponentRanking->amount < 5 ? $opponentRanking->firstvalue : $opponentRanking->value;
 
         // Use the round to determine whether to use lastvalue or value
         return $round < $ranking->round ? $scoringFactor * $opponentRanking->lastvalue : $scoringFactor * $opponentValue;
     }
 
-    private function updateRankingStats($whiteRanking, $whiteScore, $blackRanking, $blackScore, $whiteResult, $blackResult)
+    private function updateRankingStats($whiteRanking, $whiteScore, $blackRanking, $blackScore, $whiteResult, $blackResult): void
     {
         $whiteRanking->score = $whiteScore;
         $whiteRanking->amount += 1;
-        $whiteRanking->gamescore += $whiteResult === "1" ? 1 : ($whiteResult === "0.5" ? 0.5 : 0);
+        $whiteRanking->gamescore += $whiteResult === '1' ? 1 : ($whiteResult === '0.5' ? 0.5 : 0);
         $whiteRanking->tpr = $this->calculateTPR($whiteRanking->user_id);
         $whiteRanking->save();
-        if($blackRanking == "No"){
-
-        }else{
+        if ($blackRanking != 'No') {
             $blackRanking->score = $blackScore;
-        $blackRanking->amount += 1;
-        $blackRanking->gamescore += $blackResult === "1" ? 1 : ($blackResult === "0.5" ? 0.5 : 0);
-        $blackRanking->tpr = $this->calculateTPR($blackRanking->user_id);
-        $blackRanking->save();
+            $blackRanking->amount += 1;
+            $blackRanking->gamescore += $blackResult === '1' ? 1 : ($blackResult === '0.5' ? 0.5 : 0);
+            $blackRanking->tpr = $this->calculateTPR($blackRanking->user_id);
+            $blackRanking->save();
         }
-
-
-
 
     }
 
@@ -208,10 +211,11 @@ class newCalculation
     private function calculateInitialScore($ranking, $userId)
     {
         $user = User::find($userId);
+
         return $ranking->score === 0 ? ($user->beschikbaar === 0 ? $ranking->firstvalue : $ranking->value) : $ranking->score;
     }
 
-    private function markRoundAsProcessed($round)
+    private function markRoundAsProcessed($round): void
     {
         $roundProcessed = Round::find($round);
         $roundProcessed->processed = 1;
@@ -220,16 +224,16 @@ class newCalculation
         Log::info("Marked round $round as processed.");
     }
 
-    private function updateRankings($moveToWinterScore)
+    private function updateRankings($moveToWinterScore): void
     {
         $rankings = Ranking::orderBy('score', 'desc')->get();
-        $rankingValue = Config::InitRanking("start");
+        $rankingValue = Config::InitRanking('start');
 
-        if($moveToWinterScore){
-        // Update the value of Config->summer.
-        $config = Config::find(1);
-        $config->summer = 1;
-        $config->save();
+        if ($moveToWinterScore) {
+            // Update the value of Config->summer.
+            $config = Config::find(1);
+            $config->summer = 1;
+            $config->save();
         }
 
         foreach ($rankings as $ranking) {
@@ -240,15 +244,17 @@ class newCalculation
             $ranking->save();
 
             Log::info("Updated ranking value for user: {$ranking->user_id} to: {$ranking->value}");
-            $rankingValue -= Config::InitRanking("step");
+            $rankingValue -= Config::InitRanking('step');
         }
     }
 
-    private function isSeasonBreak(){
+    private function isSeasonBreak()
+    {
         return Config::SeasonPart();
     }
 
-    private function movedToSummer(){
+    private function movedToSummer(): bool
+    {
         return Config::Summer();
     }
 
@@ -264,6 +270,7 @@ class newCalculation
         $average_rating = ($user->ratop + $user->winter_ratop) / ($user->amount + $user->winter_amount);
         $based_on_divide = $this->GetValueForTPR($divide);
         $tpr = $average_rating + $based_on_divide;
+
         return $tpr;
     }
 
@@ -274,32 +281,33 @@ class newCalculation
         if ($value == null) {
             return 0;
         }
+
         return $value->dp;
     }
 
-    private function awardPresenceScore($playerId)
-{
-    $ranking = $this->getOrCreateRanking($playerId);
+    private function awardPresenceScore($playerId): void
+    {
+        $ranking = $this->getOrCreateRanking($playerId);
 
-    // Add the Presence score
-    $presenceScore = Config::Scoring("Presence");
-    $ranking->score += $presenceScore;
+        // Add the Presence score
+        $presenceScore = Config::Scoring('Presence');
+        $ranking->score += $presenceScore;
 
-    $ranking->save();
-
-    Log::info("Awarded Presence score of $presenceScore to user: $playerId");
-}
-
-private function updateRatop($ranking, $opponentId)
-{
-    $opponent = User::find($opponentId);
-
-    if ($opponent) {
-        $opponentRating = $opponent->rating > 0 ? $opponent->rating : 1000; // Default to 1000 if no rating is set
-        $ranking->ratop += $opponentRating;
         $ranking->save();
 
-        Log::info("Updated ratop for user: {$ranking->user_id} by adding opponent rating: $opponentRating");
+        Log::info("Awarded Presence score of $presenceScore to user: $playerId");
     }
-}
+
+    private function updateRatop($ranking, $opponentId): void
+    {
+        $opponent = User::find($opponentId);
+
+        if ($opponent) {
+            $opponentRating = $opponent->rating > 0 ? $opponent->rating : 1000; // Default to 1000 if no rating is set
+            $ranking->ratop += $opponentRating;
+            $ranking->save();
+
+            Log::info("Updated ratop for user: {$ranking->user_id} by adding opponent rating: $opponentRating");
+        }
+    }
 }

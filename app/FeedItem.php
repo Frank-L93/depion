@@ -2,9 +2,9 @@
 
 namespace App;
 
+use App\Exceptions\InvalidFeedItem;
 use Carbon\Carbon;
 use Exception;
-use App\Exceptions\InvalidFeedItem;
 
 class FeedItem
 {

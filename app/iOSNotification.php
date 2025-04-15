@@ -3,19 +3,18 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Feedable;
-use App\FeedItem;
 
 class iOSNotification extends Model implements Feedable
 {
-     /**
+    /**
      * The attributes that are mass assignable.
      *
      * @var array
      */
     protected $fillable = [
-        'user_id', 'title', 'summary', 'link','author',
+        'user_id', 'title', 'summary', 'link', 'author',
     ];
+
     public function toFeedItem()
     {
         return FeedItem::create()
@@ -26,6 +25,7 @@ class iOSNotification extends Model implements Feedable
             ->link($this->link)
             ->author($this->author);
     }
+
     public static function getFeedItems()
     {
         return iOSNotification::all();

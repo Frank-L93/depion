@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\User;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\PushController;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class ActivationController extends Controller
 {
@@ -29,13 +27,16 @@ class ActivationController extends Controller
                 $user->password = Hash::make($password);
                 $user->activate = $activation_key;
                 $user->save();
-                $a = new PushController();
-                $a->push('activation', $password . ' & ' . $activation_key, $request->input('email'), '4');
+                $a = new PushController;
+                $a->push('activation', $password.' & '.$activation_key, $request->input('email'), '4');
+
                 return redirect()->route('activation')->with('success', 'Wachtwoord gereset, check je mail');
             }
+
             return redirect()->route('login')->with('error', 'Je bent niet actief, dus kunt ook geen nieuw wachtwoord aanvragen. Dat heb je waarschijnlijk al gedaan.');
         }
-        return view('activation.index')->with('error', 'Opgegeven emailadres is niet gekoppeld aan een account. Je kunt dus niet activeren met dit emailadres');
+
+        return view('pages.index')->with('error', 'Opgegeven emailadres is niet gekoppeld aan een account. Je kunt dus niet activeren met dit emailadres');
     }
 
     public function activate($activate, $email)
@@ -49,9 +50,11 @@ class ActivationController extends Controller
                 $user->active = 1;
                 $user->activate = 0;
                 $user->save();
+
                 return redirect()->route('login')->with('success', 'Je nieuwe wachtwoord is actief. Je kunt nu inloggen. Pas je wachtwoord aan in je instellingen.');
             }
         }
+
         return view('pages.index')->with('error', 'Er ging iets mis bij de wachtwoordactivatie. Klopte je link wel?');
     }
 }

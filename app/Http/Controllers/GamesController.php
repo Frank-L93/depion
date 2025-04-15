@@ -2,24 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Game;
-use App\Models\Presence;
+use App\Models\Ranking;
 use App\Models\Round;
 use App\Models\User;
-use App\Models\Ranking;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\View\View;
 
 class GamesController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): View
     {
         $user = auth()->user()->id;
 
@@ -31,8 +27,8 @@ class GamesController extends Controller
         $users = User::all();
         $rounds = Round::all();
 
-        $round_to_process = Round::where('processed', NULL)->where('published', 1)->first();
-        if ($round_to_process == NULL) {
+        $round_to_process = Round::where('processed', null)->where('published', 1)->first();
+        if ($round_to_process == null) {
             $round_to_process = new Round;
             $round_to_process->id = 1;
         }
@@ -41,60 +37,25 @@ class GamesController extends Controller
 
         return view('games.index')->with('rounds', $rounds)->with('ranking', $ranking)->with('games', $games)->with('users', $users)->with('current_user', $user)->with('round_to_process', $round_to_process);
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-
-
-    public function edit($id)
+    public function edit($id): View
     {
         $game = Game::find($id);
+
         return view('games.edit')->with('game', $game);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): Mixed
     {
         //
         $game = Game::find($id);
@@ -106,16 +67,5 @@ class GamesController extends Controller
         } else {
             return redirect('Admin')->with('error', 'Dit is niet jouw aanwezigheid die jij probeert aan te passen!');
         }
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

@@ -4,8 +4,6 @@ namespace App;
 
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
-use App\Helpers\Path;
-use App\Http\FeedController;
 
 class FeedServiceProvider extends ServiceProvider
 {
@@ -34,20 +32,20 @@ class FeedServiceProvider extends ServiceProvider
     protected function registerRouteMacro()
     {
         $router = $this->app['router'];
-        
-        $router->macro('feeds', function ($baseUrl = '') use ($router) {
-           
-            foreach (config('feed.feeds') as $name => $configuration) {
-                $url = Path::merge($baseUrl, $configuration['url']);
 
-                $router->get($url, '\\'.FeedController::class)->name("feeds.{$name}");
+        $router->macro('feeds', function ($baseUrl = '') use ($router): void {
+
+            foreach (config('feed.feeds') as $name => $configuration) {
+                $url = 'interndepion.nl/feeds/'.$name;
+
+
             }
         });
     }
 
     public function registerLinksComposer()
     {
-        View::composer('feed::links', function ($view) {
+        View::composer('feed::links', function ($view): void {
             $view->with('feeds', $this->feeds());
         });
     }

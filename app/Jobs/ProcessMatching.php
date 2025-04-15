@@ -5,11 +5,11 @@ namespace App\Jobs;
 use App\Actions\MatchGames;
 use App\Models\User;
 use App\Notifications\PushDemo;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProcessMatching implements ShouldQueue
 {
@@ -18,6 +18,7 @@ class ProcessMatching implements ShouldQueue
     protected $round;
 
     protected $players;
+
     /**
      * Create a new job instance.
      */
@@ -29,31 +30,31 @@ class ProcessMatching implements ShouldQueue
 
     public function handle(): void
     {
-        Log::info('Starting ProcessMatching job for round: ' . $this->round);
+        Log::info('Starting ProcessMatching job for round: '.$this->round);
         try {
             DB::beginTransaction();
             $matching = new MatchGames;
             $result = $matching->InitPairing($this->players, $this->round);
 
-            if($result == false)
-            {
+            if ($result == false) {
                 Log::error('Error with matching: return false. Round '.$this->round);
                 throw new Exception('Error with matching: return false. Round '.$this->round);
             }
             DB::commit();
-            Log::info('Successfully finished ProcessMatching for round: ' . $this->round);
+            Log::info('Successfully finished ProcessMatching for round: '.$this->round);
 
             // Send the notification
             $this->sendSuccessNotification();
 
         } catch (Exception $e) {
             DB::rollBack();
-            Log::error('ProcessMatching job failed for round: ' . $this->round . ' - Error: ' . $e->getMessage());
+            Log::error('ProcessMatching job failed for round: '.$this->round.' - Error: '.$e->getMessage());
             // You could optionally send a notification here,
             // if it fails after the retries it will be added to the failed-jobs.
             $this->fail($e); // Fail this job, so that it will be added to the failed-jobs table
         }
     }
+
     /**
      * Handle a job failure.
      */
@@ -71,7 +72,7 @@ class ProcessMatching implements ShouldQueue
 
         // Send the notification to each admin/competitieleider
         foreach ($users as $user) {
-            $user->notify(new PushDemo('Partijen voor ronde ' . $this->round . ' zijn succesvol aangemaakt.', 'Partijen', '3'));
+            $user->notify(new PushDemo('Partijen voor ronde '.$this->round.' zijn succesvol aangemaakt.', 'Partijen', '3'));
         }
     }
 }

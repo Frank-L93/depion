@@ -21,9 +21,9 @@ return [
      *
      */
     'welcome' => [
-        'title'   => 'Welcome',
+        'title' => 'Welcome',
         'message' => 'Thank you for choosing KeizerPHP. If you see this, you will need to follow the installation process. We will first check some requirements, then you will need to fill in some technical information (i.e. Database-connection). Afterwards you will be creating your Admin-account and you configure the competition. If you encounter any issues, contact KeizerPHP via Frank Lambregts (frank@franklambregts.com).',
-        'next'    => 'Check Requirements',
+        'next' => 'Check Requirements',
     ],
 
     /*
@@ -33,7 +33,7 @@ return [
      */
     'requirements' => [
         'title' => 'Step 1 / 5 | Server Requirements',
-        'next'    => 'Check Permissions',
+        'next' => 'Check Permissions',
     ],
 
     /*
@@ -111,15 +111,15 @@ return [
                     'mail_password_placeholder' => 'Mail Password',
                     'mail_encryption_label' => 'Mail Encryption',
                     'mail_encryption_placeholder' => 'Mail Encryption',
-                    'mail_from_label'=>'Mail From Address',
-                    'mail_from_placeholder'=>'Mail From Address',
+                    'mail_from_label' => 'Mail From Address',
+                    'mail_from_placeholder' => 'Mail From Address',
 
-                    'vapid_help_label'=>'Copy the string between the "" for both the public key and private key from the link beneath',
-                    'vapid_get_label'=>'Get your VAPID Keys (Necessary to send Push Notifications)',
-                    'vapid_public_label'=>'Vapid Public Key',
-                    'vapid_public_placeholder'=>'Vapid Public Key',
-                    'vapid_private_label'=>'Vapid Private Key',
-                    'vapid_private_placeholder'=>'Vapid Private Key',
+                    'vapid_help_label' => 'Copy the string between the "" for both the public key and private key from the link beneath',
+                    'vapid_get_label' => 'Get your VAPID Keys (Necessary to send Push Notifications)',
+                    'vapid_public_label' => 'Vapid Public Key',
+                    'vapid_public_placeholder' => 'Vapid Public Key',
+                    'vapid_private_label' => 'Vapid Private Key',
+                    'vapid_private_placeholder' => 'Vapid Private Key',
                 ],
                 'buttons' => [
                     'setup_database' => 'Setup Database',
@@ -128,7 +128,7 @@ return [
                 ],
             ],
         ],
-        'save'=>'Save .env',
+        'save' => 'Save .env',
         'success' => 'Your .env file settings have been saved.',
         'errors' => 'Unable to save the .env file, Please create it manually.',
     ],
@@ -143,8 +143,7 @@ return [
         'confirm' => 'Confirm Password',
         'register' => 'Create Admin Account',
     ],
-    'configs' =>
-    [
+    'configs' => [
         'title' => 'Step 5 / 5 | Competition Configuration',
         'competition' => 'Competition Name',
         'season' => 'Season',

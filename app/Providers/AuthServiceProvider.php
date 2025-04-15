@@ -29,6 +29,7 @@ class AuthServiceProvider extends ServiceProvider
             if ($user->rechten == 2) {
                 return true;
             }
+
             return false;
         });
     }

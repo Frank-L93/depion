@@ -1,8 +1,7 @@
 <?php
 
 return [
-    'about' =>
-    [
+    'about' => [
         'header' => 'About',
         'body' => 'A Kaiser Competition, supported by:<br>
         <ul>
@@ -20,8 +19,7 @@ return [
         
         <small>Version 1-2020 - Copyright Frank Lambregts</small>',
     ],
-    'index' =>
-    [
+    'index' => [
         'header_Guest' => 'Login',
         'header_User' => 'Menu of ',
         'body_Guest' => 'Login to use the Menu ',
@@ -37,12 +35,11 @@ return [
         'absent_dashboard' => 'Absences',
         'present' => 'Present',
     ],
-    'main' =>
-    [
+    'main' => [
 
         'Round' => 'Round',
         'Game' => 'Game',
         'round' => 'round',
         'game' => 'game',
-    ]
+    ],
 ];
