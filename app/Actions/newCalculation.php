@@ -152,14 +152,66 @@ class newCalculation
 
     private function calculateAbsenceScore($game, $ranking, $type, $round): float|int
     {
-        if ($type === 'Club' || $type === 'Personal' || $type === 'Other') {
-            $scoringFactor = Config::Scoring($type);
+        // Haal de scoringsfactor op uit de configuratie
+        $scoringFactor = Config::Scoring($type);
+        // Bepaal de waarde die gebruikt moet worden (huidige of vorige ronde)
+        $valueToUse = $game->round_id < $round ? $ranking->lastvalue : $ranking->value;
 
-            return $game->round_id < $round ? $scoringFactor * $ranking->lastvalue : $scoringFactor * $ranking->value;
+        if ($type === 'Club' || $type === 'Personal') {
+            // Voor Club en Personal afwezigheid, geef altijd score
+            return $scoringFactor * $valueToUse;
         }
 
+        if ($type === 'Other') {
+            // Voor 'Other' afwezigheid, controleer de limiet
+            $absenceMax = Config::AbsenceMax();
+            $playerId = $ranking->user_id;
+
+            // Bepaal de query voor het tellen van 'Other' afwezigheden in het juiste seizoensdeel
+            $absenceQuery = Game::where('white', $playerId)
+                ->where('result', 'Afwezigheid')
+                ->where('black', 'Other');
+
+            // Haal alle relevante 'Other' afwezigheden op, gesorteerd op ronde
+            $otherAbsences = $absenceQuery->orderBy('round_id')->get();
+
+            // Tel hoeveel 'Other' afwezigheden er waren *vóór of in* de ronde van de huidige game
+            $countForLimitCheck = 0;
+            $limitReached = false;
+            foreach ($otherAbsences as $index => $absenceGame) {
+                // Tel alleen de eerste $absenceMax afwezigheden mee
+                if ($index < $absenceMax) {
+                    // Als de huidige game ID overeenkomt met een van de eerste $absenceMax games,
+                    // dan moet er score worden toegekend.
+                    if ($absenceGame->id === $game->id) {
+                        return $scoringFactor * $valueToUse;
+                    }
+                } else {
+                    // Als we meer dan $absenceMax games hebben en de huidige game is *niet*
+                    // een van de eerste $absenceMax, dan is de limiet bereikt voor deze game.
+                    if ($absenceGame->id === $game->id) {
+                        $limitReached = true;
+                        break; // Stop met zoeken, we weten dat er geen score moet komen
+                    }
+                }
+            }
+
+            // Als de huidige game ID niet gevonden is bij de eerste $absenceMax games,
+            // of als de limit expliciet bereikt was, geef geen score.
+            if($limitReached || !$otherAbsences->contains('id', $game->id)) {
+                Log::info("Absence limit reached for user: {$playerId} in round: {$game->round_id}. No 'Other' absence score awarded.");
+                return 0;
+            } else {
+                // Dit zou theoretisch niet bereikt moeten worden door de return in de loop, maar als fallback:
+                return $scoringFactor * $valueToUse;
+            }
+
+        }
+
+        // Als het geen van bovenstaande types is, geef geen score
         return 0;
     }
+
 
     private function calculateByeScore($game, $ranking, $round): float|int
     {
