@@ -9,6 +9,7 @@ use App\Http\Controllers\PresencesController;
 use App\Http\Controllers\RankingsController;
 use App\Http\Controllers\RoundsController;
 use App\Http\Controllers\SettingsController;
+use App\Models\Game;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -105,6 +106,20 @@ Route::controller(AdminController::class)->group(function (): void {
     Route::delete('/Admin/{User}/User', 'DestroyUser')->name('destroyUser');
     Route::delete('/Admin/{Game}/Games', 'DestroyGames')->name('destroyGames');
     Route::delete('/Admin/{Round}/Rounds', 'DestroyRounds')->name('destroyRounds');
+
+    Route::get('/Admin/fixRounds', function(){
+        $rankings = \App\Models\Ranking::all();
+        foreach($rankings as $rank)
+        {
+            $user_id = $rank->user_id;
+            $gamesWhite = Game::where('white', $user_id)->where('black', '<>', 'Other')->count();
+            $gamesBlack = Game::where('black', $user_id)->count();
+            $totalGames = $gamesWhite + $gamesBlack;
+            $rank->amount = $totalGames;
+            $rank->save();
+        }
+        return "Recounted the games";
+    });
 })->middleware('admin');
 
 // Web-Push #
