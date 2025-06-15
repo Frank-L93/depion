@@ -182,12 +182,14 @@ class DetailsService
 
                 // Find white and black in the ranking
                 $white_ranking = Ranking::where('user_id', $game->white)->first();
-                if ($game->black != 'Bye') {
+                $white_absence = User::where('id', $game->white)->first();
+                if ($game->black != 'Bye' || $game->black != 'Other') {
                     $black_ranking = Ranking::where('user_id', $game->black)->first();
+                    $black_absence = User::where('id', $game->black)->first();
                 }
 
-                $white_absence = User::where('id', $game->white)->first();
-                $black_absence = User::where('id', $game->black)->first();
+
+
 
                 // Defaults; //69.05
                 $white_score = 0;
