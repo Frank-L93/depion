@@ -9,7 +9,7 @@
         "@rollup/plugin-inject": "^5.0.4",
         "axios": "*",
         "laravel-vite-plugin": "^1.2.0",
-        "vite": "^6.0.0"
+        "vite": "^6.4.1"
     },
     "dependencies": {
         "@inertiajs/react": "^2.0.5",
